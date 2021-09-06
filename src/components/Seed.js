@@ -2,34 +2,33 @@ import { db, firebase } from 'lib/firebase';
 
 function Seed() {
   const seedChat = () => {
-    const chatsRef = db.collection('chats');
+    const batch = db.batch();
 
-    chatsRef
-      .add(chats[2])
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((error) => console.log(error));
+    Object.entries(chatsData).forEach(([chatId, chatData]) => {
+      const chatRef = db.doc(`chats/${chatId}`);
+      batch.set(chatRef, chatData);
+    });
+
+    batch.commit().catch((error) => {
+      console.log(error);
+    });
   };
 
   const seedMsgs = () => {
-    const chatId = 'icuPCilCIftrXdR7HT4y';
-    const msgsRef = db.collection(`chats/${chatId}/msgs`);
     const batch = db.batch();
 
-    msgsJake.forEach((msg) => {
-      const msgRef = msgsRef.doc();
-      batch.set(msgRef, msg);
+    Object.entries(msgsData).forEach(([chatId, msgs]) => {
+      const msgsRef = db.collection(`chats/${chatId}/msgs`);
+
+      msgs.forEach((msg) => {
+        const msgRef = msgsRef.doc();
+        batch.set(msgRef, msg);
+      });
     });
 
-    batch
-      .commit()
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    batch.commit().catch((error) => {
+      console.log(error);
+    });
   };
 
   return (
@@ -46,107 +45,120 @@ function Seed() {
 
 export default Seed;
 
-const chats = [
-  {
-    users: ['IPy5AoZF7caQgFyOL1X5PlfM5CP2', 'VnweQsAZpvZbFJ05MeHL03kErto2'],
-    userProfiles: {
-      IPy5AoZF7caQgFyOL1X5PlfM5CP2: {
+const users = {
+  james: 'IPy5AoZF7caQgFyOL1X5PlfM5CP2',
+  ste: 'XfLoq3OnKwUnIWqvZFy1kchfqz83',
+  jake: 'VnweQsAZpvZbFJ05MeHL03kErto2',
+  kate: 'sYV6FpFVqNRdrV0RYaYfWVYrkTv2',
+};
+
+function createChatId(user1, user2) {
+  return user1 < user2 ? `${user1}_${user2}` : `${user2}_${user1}`;
+}
+
+const chatsData = {
+  [createChatId(users.james, users.jake)]: {
+    members: [users.james, users.jake],
+    memberInfo: {
+      [users.james]: {
         displayName: 'James',
         photoURL: '/james.jpg',
       },
-      VnweQsAZpvZbFJ05MeHL03kErto2: {
+      [users.jake]: {
         displayName: 'Jake',
         photoURL: '/jake.jpg',
       },
     },
     lastMsg: {
+      author: users.jake,
+      text: 'Time to make rabbit stew!',
       sentAt: firebase.firestore.Timestamp.fromDate(
         new Date('2021-08-30T00:32:00')
       ),
-      text: 'Time to make rabbit stew!',
     },
   },
-
-  {
-    users: ['IPy5AoZF7caQgFyOL1X5PlfM5CP2', 'XfLoq3OnKwUnIWqvZFy1kchfqz83'],
-    userProfiles: {
-      IPy5AoZF7caQgFyOL1X5PlfM5CP2: {
+  [createChatId(users.james, users.ste)]: {
+    members: [users.james, users.ste],
+    memberInfo: {
+      [users.james]: {
         displayName: 'James',
         photoURL: '/james.jpg',
       },
-      XfLoq3OnKwUnIWqvZFy1kchfqz83: {
+      [users.ste]: {
         displayName: 'Ste',
         photoURL: '/ste.jpg',
       },
     },
     lastMsg: {
+      author: users.james,
+      text: 'Oh awesome!  Yeah yeah all good dude 😁 xx',
       sentAt: firebase.firestore.Timestamp.fromDate(
         new Date('2021-09-04T18:52:00')
       ),
-      text: 'Oh awesome!  Yeah yeah all good dude 😁 xx',
     },
   },
-  {
-    users: ['XfLoq3OnKwUnIWqvZFy1kchfqz83', 'sYV6FpFVqNRdrV0RYaYfWVYrkTv2'],
-    userProfiles: {
-      XfLoq3OnKwUnIWqvZFy1kchfqz83: {
+  [createChatId(users.kate, users.ste)]: {
+    members: [users.kate, users.ste],
+    memberInfo: {
+      [users.ste]: {
         displayName: 'Ste',
         photoURL: '/ste.jpg',
       },
-      sYV6FpFVqNRdrV0RYaYfWVYrkTv2: {
+      [users.kate]: {
         displayName: 'Kate',
         photoURL: '/kate.jpg',
       },
     },
     lastMsg: {
+      author: users.kate,
+      text: "Hi steve, it's kate here!",
       sentAt: firebase.firestore.Timestamp.fromDate(
-        new Date('2021-09-05T22:43:00')
+        new Date('2021-09-06T12:43:00')
       ),
-      text:
-        "Yeah! I'm rewatching Disney's fantasia. Psychedelic trip without taking anything! Xx",
     },
   },
-];
+};
 
-const msgsJake = [
-  {
-    author: 'IPy5AoZF7caQgFyOL1X5PlfM5CP2',
-    sentAt: firebase.firestore.Timestamp.fromDate(
-      new Date('2021-08-30T00:31:00')
-    ),
-    text:
-      'I don wanna talk to you no more.. youuu empty headed.. animal food trough.. wippperrr',
-  },
+const msgsData = {
+  [createChatId(users.james, users.ste)]: [
+    {
+      author: users.james,
+      text: 'Oh awesome! Yeah yeah all good dude 😁 xx',
+      sentAt: firebase.firestore.Timestamp.fromDate(
+        new Date('2021-09-04T18:52:00')
+      ),
+    },
+    {
+      author: users.ste,
+      text: 'How you doing? Xx',
+      sentAt: firebase.firestore.Timestamp.fromDate(
+        new Date('2021-09-04T17:42:30')
+      ),
+    },
+    {
+      author: users.ste,
+      text: 'At Neighbourhood Weekender with Kate x',
+      sentAt: firebase.firestore.Timestamp.fromDate(
+        new Date('2021-09-04T17:42:20')
+      ),
+    },
+  ],
 
-  {
-    author: 'VnweQsAZpvZbFJ05MeHL03kErto2',
-    sentAt: firebase.firestore.Timestamp.fromDate(
-      new Date('2021-08-30T00:32:00')
-    ),
-    text: 'Time to make rabbit stew',
-  },
-];
-
-const msgsSte = [
-  {
-    author: 'IPy5AoZF7caQgFyOL1X5PlfM5CP2',
-    sentAt: firebase.firestore.Timestamp.fromDate(
-      new Date('2021-09-04T18:52:00')
-    ),
-    text: 'Oh awesome! Yeah yeah all good dude 😁 xx',
-  },
-  {
-    author: 'XfLoq3OnKwUnIWqvZFy1kchfqz83',
-    sentAt: firebase.firestore.Timestamp.fromDate(
-      new Date('2021-09-04T17:42:30')
-    ),
-    text: 'How you doing? Xx',
-  },
-  {
-    author: 'XfLoq3OnKwUnIWqvZFy1kchfqz83',
-    sentAt: firebase.firestore.Timestamp.fromDate(
-      new Date('2021-09-04T17:42:20')
-    ),
-    text: 'At Neighbourhood Weekender with Kate x',
-  },
-];
+  [createChatId(users.james, users.jake)]: [
+    {
+      author: users.james,
+      text:
+        'I don wanna talk to you no more.. youuu empty headed.. animal food trough.. wippperrr',
+      sentAt: firebase.firestore.Timestamp.fromDate(
+        new Date('2021-08-30T00:31:00')
+      ),
+    },
+    {
+      author: users.jake,
+      text: 'Time to make rabbit stew',
+      sentAt: firebase.firestore.Timestamp.fromDate(
+        new Date('2021-08-30T00:32:00')
+      ),
+    },
+  ],
+};
