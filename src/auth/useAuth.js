@@ -1,5 +1,5 @@
-import { useEffect, useContext, createContext, useReducer } from 'react';
-import { auth } from 'lib/firebase';
+import { useEffect, useContext, createContext, useState } from 'react';
+import { auth, db } from 'lib/firebase';
 
 const AuthContext = createContext();
 
@@ -13,36 +13,28 @@ export const useAuth = () => {
 };
 
 function useProvideAuth() {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [authAttempted, setAuthAttempted] = useState(false);
+  const [authUser, setAuthUser] = useState(null);
 
   useEffect(() => {
-    return auth.onAuthStateChanged((authUser) => {
-      if (authUser) {
+    return auth.onAuthStateChanged((firebaseUser) => {
+      if (firebaseUser) {
         const user = {
-          uid: authUser.uid,
-          displayName: authUser.displayName,
-          email: authUser.email,
-          photoURL: authUser.photoURL,
+          uid: firebaseUser.uid,
+          displayName: firebaseUser.displayName,
+          email: firebaseUser.email,
+          photoURL: firebaseUser.photoURL,
         };
-        dispatch({ type: 'AUTH_CHANGE', auth: user });
+        setAuthUser(user);
+        db.doc(`users/${user.uid}`)
+          .set(user, { merge: true })
+          .catch((error) => console.log('Error: ' + error.message));
       } else {
-        dispatch({ type: 'AUTH_CHANGE', auth: null });
+        setAuthUser(null);
       }
+      setAuthAttempted(true);
     });
   }, []);
 
-  return { ...state, dispatch };
+  return { authAttempted, authUser };
 }
-
-const reducer = (state, action) => {
-  switch (action.type) {
-    case 'AUTH_CHANGE':
-      return { ...state, authAttempted: true, auth: action.auth };
-    case 'LOAD_USER':
-      return { ...state, user: action.user };
-    default:
-      throw new Error('Unexpected action');
-  }
-};
-
-const initialState = { authAttempted: false, auth: null, user: null };
