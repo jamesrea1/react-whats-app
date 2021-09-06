@@ -4,9 +4,6 @@ import { ERROR_CODES } from 'utils/constants';
 import useInput from 'utils/useInput';
 
 function UnauthenticatedApp() {
-  const user = auth.currentUser;
-  console.log(user);
-
   return (
     <div className="flex justify-center">
       <SignIn />
@@ -16,13 +13,11 @@ function UnauthenticatedApp() {
 }
 
 function SignIn() {
-  const email = useInput('jake@test.com', 'email');
+  const email = useInput('jamesreadev@outlook.com', 'email');
   const password = useInput('asdasd', 'password');
   const [error, setError] = useState(undefined);
 
   const handleSubmit = (e) => {
-    const user = auth.currentUser;
-    console.log(user);
     e.preventDefault();
     error && setError(null);
 

@@ -3,10 +3,11 @@ import UnauthenticatedApp from 'components/UnauthenticatedApp';
 import { AuthProvider, useAuth } from 'auth/useAuth';
 
 function App() {
-  const { authAttempted, auth } = useAuth();
+  const { authAttempted, authUser } = useAuth();
+
   return !authAttempted ? (
     'loading'
-  ) : auth ? (
+  ) : authUser ? (
     <AuthenticatedApp />
   ) : (
     <UnauthenticatedApp />
