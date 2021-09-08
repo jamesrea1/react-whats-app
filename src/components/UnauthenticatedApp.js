@@ -58,7 +58,7 @@ function SignIn() {
 }
 
 function SignUp() {
-  //const displayName = useInput();
+  //const displayName = useInput();  //set when logged in
   const email = useInput('', 'email');
   const password = useInput('', 'password');
   const [error, setError] = useState(undefined);
@@ -73,7 +73,8 @@ function SignUp() {
       //   const { user } = UserCredential;
       //   return user.updateProfile({
       //     displayName: displayName.value,
-      //     photoURL: `https://i.pravatar.cc/150?u=${user.uid}`,
+      //     sortName: displayName.value.toLowerCase(),
+      //     photoURL: `https://i.pravatar.cc/150?u=${user.uid}`,  //upload when logged in ?
       //   });
       // })
       // .then(() => {

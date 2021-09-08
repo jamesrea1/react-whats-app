@@ -6,17 +6,23 @@ import Header from './Header';
 import ChatList from './ChatList';
 import Seed from './Seed';
 import Conversation from './Conversation';
+import { useState } from 'react';
+
+import Profile from './Profile';
 
 function AuthenticatedApp() {
-  // const handleNewChat = () => {};
+  const [activeChatContact, setActiveChatContact] = useState();
 
   return (
     <>
       <Header />
-      <NewChat />
-      <ChatList />
-      <Conversation />
-      <Seed />
+      <div className="flex">
+        <NewChat setActiveChatContact={setActiveChatContact} />
+        <ChatList setActiveChatContact={setActiveChatContact} />
+        <Conversation contact={activeChatContact} />
+      </div>
+      <Profile />
+      {/* <Seed /> */}
     </>
   );
 }

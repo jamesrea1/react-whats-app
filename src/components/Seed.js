@@ -4,8 +4,8 @@ function Seed() {
   const seedChat = () => {
     const batch = db.batch();
 
-    Object.entries(chatsData).forEach(([chatId, chatData]) => {
-      const chatRef = db.doc(`chats/${chatId}`);
+    Object.entries(chatsData).forEach(([id, chatData]) => {
+      const chatRef = db.doc(`chats/${id}`);
       batch.set(chatRef, chatData);
     });
 
@@ -17,8 +17,8 @@ function Seed() {
   const seedMsgs = () => {
     const batch = db.batch();
 
-    Object.entries(msgsData).forEach(([chatId, msgs]) => {
-      const msgsRef = db.collection(`chats/${chatId}/msgs`);
+    Object.entries(msgsData).forEach(([id, msgs]) => {
+      const msgsRef = db.collection(`chats/${id}/msgs`);
 
       msgs.forEach((msg) => {
         const msgRef = msgsRef.doc();
@@ -52,19 +52,21 @@ const users = {
   kate: 'sYV6FpFVqNRdrV0RYaYfWVYrkTv2',
 };
 
-function createChatId(user1, user2) {
+function getDerivedChatKey(user1, user2) {
   return user1 < user2 ? `${user1}_${user2}` : `${user2}_${user1}`;
 }
 
 const chatsData = {
-  [createChatId(users.james, users.jake)]: {
+  [getDerivedChatKey(users.james, users.jake)]: {
     members: [users.james, users.jake],
     memberInfo: {
       [users.james]: {
+        uid: users.james,
         displayName: 'James',
         photoURL: '/james.jpg',
       },
       [users.jake]: {
+        uid: users.jake,
         displayName: 'Jake',
         photoURL: '/jake.jpg',
       },
@@ -77,14 +79,16 @@ const chatsData = {
       ),
     },
   },
-  [createChatId(users.james, users.ste)]: {
+  [getDerivedChatKey(users.james, users.ste)]: {
     members: [users.james, users.ste],
     memberInfo: {
       [users.james]: {
+        uid: users.james,
         displayName: 'James',
         photoURL: '/james.jpg',
       },
       [users.ste]: {
+        uid: users.ste,
         displayName: 'Ste',
         photoURL: '/ste.jpg',
       },
@@ -97,14 +101,16 @@ const chatsData = {
       ),
     },
   },
-  [createChatId(users.kate, users.ste)]: {
+  [getDerivedChatKey(users.kate, users.ste)]: {
     members: [users.kate, users.ste],
     memberInfo: {
       [users.ste]: {
+        uid: users.ste,
         displayName: 'Ste',
         photoURL: '/ste.jpg',
       },
       [users.kate]: {
+        uid: users.kate,
         displayName: 'Kate',
         photoURL: '/kate.jpg',
       },
@@ -120,7 +126,7 @@ const chatsData = {
 };
 
 const msgsData = {
-  [createChatId(users.james, users.ste)]: [
+  [getDerivedChatKey(users.james, users.ste)]: [
     {
       author: users.james,
       text: 'Oh awesome! Yeah yeah all good dude 😁 xx',
@@ -144,7 +150,7 @@ const msgsData = {
     },
   ],
 
-  [createChatId(users.james, users.jake)]: [
+  [getDerivedChatKey(users.james, users.jake)]: [
     {
       author: users.james,
       text:
