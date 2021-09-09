@@ -3,15 +3,15 @@ import format from 'date-fns/format';
 // import isSameDay from 'date-fns/isSameDay';
 
 //https://date-fns.org/v2.23.0/docs/format
-function chatListDate(date) {
+function formatChatListDate(date) {
   return format(date, 'dd/MM/yyyy'); //'h:mm a'
 }
 
-function msgDate(date) {
+function formatMsgDate(date) {
   return format(date, 'dd/MM/yyyy h:mm a'); //'h:mm a'
 }
 
-export { chatListDate, msgDate };
+export { formatChatListDate, formatMsgDate };
 
 /*
 
@@ -28,7 +28,8 @@ chatListFormat
   return dd/mm/yyy
 
 
-msgsSeperatorFormat()
+dateMarkerFormat()
+stickyDateMarkerFormat()
   const msgDate
 
   if isToday(msg)

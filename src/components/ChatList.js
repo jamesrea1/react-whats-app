@@ -1,9 +1,10 @@
 import { db } from 'lib/firebase';
 import { useEffect, useState } from 'react';
-import { useAuth } from 'auth/useAuth';
-import { chatListDate } from 'utils/dates';
+import { useAuth } from 'context/AuthContext';
+import { useActiveChat } from 'context/ActiveChatContext';
+import { formatChatListDate } from 'utils/dates';
 
-function ChatList({ setActiveChatContact }) {
+function ChatList() {
   const [chats, setChats] = useState([]);
   const { authUser } = useAuth();
 
@@ -33,6 +34,7 @@ function ChatList({ setActiveChatContact }) {
     setChats(chatList);
   };
 
+  /* observe chats */
   useEffect(() => {
     if (authUser && authUser.uid) {
       return db
@@ -53,25 +55,19 @@ function ChatList({ setActiveChatContact }) {
     <div className="p-4 flex-initial max-w-xs">
       <h1 className="text-lg font-bold">Chat List</h1>
       <div className="mt-2">
-        {chats &&
-          chats.map((c) => (
-            <Chat
-              chat={c}
-              setActiveChatContact={setActiveChatContact}
-              key={c.id}
-            />
-          ))}
+        {chats && chats.map((c) => <Chat chat={c} key={c.id} />)}
       </div>
     </div>
   );
 }
 
 /* COMPONENT */
-function Chat({ chat, setActiveChatContact }) {
+function Chat({ chat }) {
   const { contact, lastMsg } = chat;
+  const { setContact } = useActiveChat();
 
   const handleOpenChat = (e) => {
-    setActiveChatContact(contact);
+    setContact(chat.contact);
   };
 
   return (
@@ -88,7 +84,7 @@ function Chat({ chat, setActiveChatContact }) {
           <p className="text-xl">{contact.displayName}</p>
           <p className="text-sm text-gray-500">{lastMsg.text}</p>
           <p className="text-xs text-gray-500">
-            {chatListDate(lastMsg.sentAt)}
+            {formatChatListDate(lastMsg.sentAt)}
           </p>
         </div>
       </div>

@@ -1,19 +1,15 @@
 import { useEffect, useState } from 'react';
 import { db } from 'lib/firebase';
-import { useAuth } from 'auth/useAuth';
+import { useAuth } from 'context/AuthContext';
+import { useActiveChat } from 'context/ActiveChatContext';
 
-/* COMPONENT */
-function NewChat({ setActiveChatContact }) {
+function NewChat() {
   const { authUser } = useAuth();
   const [contacts, setContacts] = useState();
 
   const loadContacts = (users) => {
-    // contacts.filter((c) => c.uid !== authUser.uid);
-    users.splice(
-      users.findIndex((c) => c.uid === authUser.uid),
-      1
-    );
-    setContacts(users);
+    const contacts = users.filter((u) => u.uid !== authUser.uid);
+    setContacts(contacts);
   };
 
   /* fetch contacts */
@@ -35,22 +31,17 @@ function NewChat({ setActiveChatContact }) {
     <div className="p-4">
       <h1 className="text-lg font-bold">Contacts</h1>
       <div className="mt-2"></div>
-      {contacts &&
-        contacts.map((c) => (
-          <Contact
-            contact={c}
-            setActiveChatContact={setActiveChatContact}
-            key={c.uid}
-          />
-        ))}
+      {contacts && contacts.map((c) => <Contact contact={c} key={c.uid} />)}
     </div>
   );
 }
 
 /* COMPONENT */
-function Contact({ contact, setActiveChatContact }) {
+function Contact({ contact }) {
+  const { setContact } = useActiveChat();
+
   const handleOpenChat = (e) => {
-    setActiveChatContact(contact);
+    setContact(contact);
   };
 
   return (

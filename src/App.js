@@ -1,6 +1,6 @@
 import AuthenticatedApp from 'components/AuthenticatedApp';
 import UnauthenticatedApp from 'components/UnauthenticatedApp';
-import { AuthProvider, useAuth } from 'auth/useAuth';
+import { AuthProvider, useAuth } from 'context/AuthContext';
 
 function App() {
   const { authAttempted, authUser } = useAuth();
@@ -14,7 +14,7 @@ function App() {
   );
 }
 
-export default function Providers() {
+export default function AppProviders() {
   return (
     <AuthProvider>
       <App />

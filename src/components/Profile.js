@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { auth } from 'lib/firebase';
 import useInput from 'utils/useInput';
-import { useAuth } from 'auth/useAuth';
+import { useAuth } from 'context/AuthContext';
 
 function Profile() {
   console.log('render profile');

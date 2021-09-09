@@ -1,5 +1,5 @@
 import { auth } from 'lib/firebase';
-import { useAuth } from 'auth/useAuth';
+import { useAuth } from 'context/AuthContext';
 
 function Header() {
   const { authUser } = useAuth();

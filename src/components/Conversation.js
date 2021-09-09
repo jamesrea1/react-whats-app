@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { db, firebase } from 'lib/firebase';
-import { useAuth } from 'auth/useAuth';
+import { useAuth } from 'context/AuthContext';
+import { useActiveChat } from 'context/ActiveChatContext';
 import useInput from 'utils/useInput';
-import { msgDate } from 'utils/dates';
+import { formatMsgDate } from 'utils/dates';
 
-function Conversation({ contact }) {
+function Conversation() {
   const { authUser } = useAuth();
+  const { contact } = useActiveChat();
   const [msgs, setMsgs] = useState([]);
   const composeMsgInput = useInput();
 
@@ -23,6 +25,7 @@ function Conversation({ contact }) {
     setMsgs(chatMsgs);
   };
 
+  /* observe msgs */
   useEffect(() => {
     if (authUser && contact) {
       const chatId = getDerivedChatKey(authUser.uid, contact.uid);
@@ -40,6 +43,7 @@ function Conversation({ contact }) {
     }
   }, [authUser, contact]);
 
+  /* set chat document after new msg */
   useEffect(() => {
     // TRIGGER - CREATE CHAT DOC & UPDATE LASTMSG INFO
     //
@@ -68,18 +72,14 @@ function Conversation({ contact }) {
               photoURL: contact.photoURL,
             },
           },
-          lastMsg: {
-            author: contact.uid,
-            text: msgs[msgs.length - 1].text,
-            sentAt: msgs[msgs.length - 1].sentAt,
-          },
+          lastMsg: msgs[msgs.length - 1],
         })
         .then(() => {})
         .catch((error) => console.log(error.message));
     }
   }, [msgs]);
 
-  const handleSubmit = (e) => {
+  const handleMsgSubmit = (e) => {
     e.preventDefault();
     const chatId = getDerivedChatKey(authUser.uid, contact.uid);
     db.collection(`chats/${chatId}/msgs`)
@@ -114,7 +114,7 @@ function Conversation({ contact }) {
       </div>
       <div className="mb-8">
         <h1 className="text-lg font-bold">ComposeBox</h1>
-        <form onSubmit={handleSubmit} className="mt-2">
+        <form onSubmit={handleMsgSubmit} className="mt-2">
           <input {...composeMsgInput.attrs} />
           <button>send</button>
         </form>
@@ -133,7 +133,7 @@ function Message({ msg }) {
       >
         <div className="max-w-sm  px-3 py-2  text-sm}">
           <p>{msg.text}</p>
-          <p>{msgDate(msg.sentAt)}</p>
+          <p>{formatMsgDate(msg.sentAt)}</p>
         </div>
       </div>
     </div>
