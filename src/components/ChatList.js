@@ -1,77 +1,36 @@
-import { db } from 'lib/firebase';
-import { useEffect, useState } from 'react';
-import { useAuth } from 'context/AuthContext';
 import { useActiveChat } from 'context/ActiveChatContext';
+import useChatList from './useChatList';
 import { formatChatListDate } from 'utils/dates';
 
 function ChatList() {
-  const [chats, setChats] = useState([]);
-  const { authUser } = useAuth();
-
-  const loadChats = (chats) => {
-    const findContact = (memberInfo) =>
-      Object.values(memberInfo).find((member) => member.uid !== authUser.uid);
-
-    const transformChat = (c) => ({
-      id: c.id,
-      lastMsg: {
-        ...c.lastMsg,
-        sentByMe: c.lastMsg.author === authUser.uid,
-        sentAt: c.lastMsg.sentAt.toDate(),
-      },
-      contact: findContact(c.memberInfo),
-    });
-
-    const sortByDate = (a, b) => {
-      return a.lastMsg.sentAt > b.lastMsg.sentAt
-        ? -1
-        : a.lastMsg.sentAt < b.lastMsg.sentAt
-        ? 1
-        : 0;
-    };
-
-    const chatList = chats.map(transformChat).sort(sortByDate);
-    setChats(chatList);
-  };
-
-  /* observe chats */
-  useEffect(() => {
-    if (authUser && authUser.uid) {
-      return db
-        .collection('chats')
-        .where('members', 'array-contains', authUser.uid)
-        .onSnapshot((snap) => {
-          const chats = snap.docs.map((doc) => ({
-            ...doc.data(),
-            id: doc.id,
-          }));
-          loadChats(chats);
-        });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authUser.uid]);
-
+  const chats = useChatList();
   return (
-    <div className="p-4 flex-initial max-w-xs">
-      <h1 className="text-lg font-bold">Chat List</h1>
-      <div className="mt-2">
-        {chats && chats.map((c) => <Chat chat={c} key={c.id} />)}
-      </div>
+    <div className="overflow-y-auto">
+      {chats && chats.map((c) => <Chat chat={c} key={c.id} />)}
+      {chats && chats.map((c) => <Chat chat={c} key={c.id} />)}
+      {chats && chats.map((c) => <Chat chat={c} key={c.id} />)}
+      {chats && chats.map((c) => <Chat chat={c} key={c.id} />)}
+      {chats && chats.map((c) => <Chat chat={c} key={c.id} />)}
+      {chats && chats.map((c) => <Chat chat={c} key={c.id} />)}
+      {chats && chats.map((c) => <Chat chat={c} key={c.id} />)}
+      {chats && chats.map((c) => <Chat chat={c} key={c.id} />)}
+      {chats && chats.map((c) => <Chat chat={c} key={c.id} />)}
+      {chats && chats.map((c) => <Chat chat={c} key={c.id} />)}
+      {chats && chats.map((c) => <Chat chat={c} key={c.id} />)}
+      {chats && chats.map((c) => <Chat chat={c} key={c.id} />)}
+      {chats && chats.map((c) => <Chat chat={c} key={c.id} />)}
     </div>
   );
 }
 
-/* COMPONENT */
 function Chat({ chat }) {
   const { contact, lastMsg } = chat;
   const { setContact } = useActiveChat();
-
   const handleOpenChat = (e) => {
     setContact(chat.contact);
   };
-
   return (
-    <button onClick={handleOpenChat} className="mb-4 block text-left">
+    <button onClick={handleOpenChat} className="block text-left">
       <div className="flex">
         <div className="w-12 h-12 mr-4 rounded-full overflow-hidden">
           <img

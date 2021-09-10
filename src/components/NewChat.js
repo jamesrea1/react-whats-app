@@ -50,7 +50,7 @@ function Contact({ contact }) {
         <div className="w-12 h-12 mr-4 rounded-full overflow-hidden">
           <img
             className="w-full h-full object-cover"
-            src={contact.photoURL}
+            src={contact.photoURL || 'default-avatar.svg'}
             alt={contact.displayName}
           />
         </div>

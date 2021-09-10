@@ -32,7 +32,7 @@ function Profile() {
     user
       .updateProfile({
         displayName: displayName.value,
-        photoURL: photoURL.value || `https://i.pravatar.cc/150?u=${user.uid}`,
+        photoURL: photoURL.value, //|| `https://i.pravatar.cc/150?u=${user.uid}`,
       })
       .then(() => {
         auth.updateCurrentUser(auth.currentUser);
