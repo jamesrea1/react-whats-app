@@ -1,39 +1,36 @@
 import format from 'date-fns/format';
+import isToday from 'date-fns/isToday';
+import isYesterday from 'date-fns/isYesterday';
+import differenceInCalendarDays from 'date-fns/differenceInCalendarDays';
 // import { daysToWeeks } from 'date-fns';
 // import isSameDay from 'date-fns/isSameDay';
 
-//https://date-fns.org/v2.23.0/docs/format
 function formatChatListDate(date) {
-  return format(date, 'dd/MM/yyyy'); //'h:mm a'
+  if (isToday(date)) {
+    return format(date, 'H:mm');
+  }
+  if (isYesterday(date)) {
+    return 'yesterday';
+  }
+  if (differenceInCalendarDays(date, new Date()) <= 7) {
+    return format(date, 'EEEE');
+  }
+
+  return format(date, 'dd/MM/yyyy');
 }
 
 function formatMsgDate(date) {
-  return format(date, 'dd/MM/yyyy h:mm a'); //'h:mm a'
+  return formatChatListDate(date);
 }
 
 export { formatChatListDate, formatMsgDate };
 
 /*
-
-chatListFormat
-  const msgDate
-
-  if isToday(msg)
-    return hh:mm
-  if isYesterday(msg)
-    return yesterday
-  if daysAgo(msg) <= 7
-    return {day}
-
-  return dd/mm/yyy
-
-
 dateMarkerFormat()
-stickyDateMarkerFormat()
-  const msgDate
 
+stickyDateMarkerFormat()
   if isToday(msg)
-    return Today          //<< only difference!
+    return Today  //<< only difference!
   if isYesterday(msg)
     return yesterday
   if daysAgo(msg) <= 7
@@ -42,9 +39,8 @@ stickyDateMarkerFormat()
   return dd/mm/yyy
 
 
-
-msgInfo
-today at hh:mm,
-yesterday at hh:mm,
-05/09/2021 at hh:mm
+formatMsgInfoDate()
+  today at hh:mm,
+  yesterday at hh:mm,
+  05/09/2021 at hh:mm
 */
