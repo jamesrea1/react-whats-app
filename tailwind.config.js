@@ -13,6 +13,9 @@ module.exports = {
       '2xl': '1441px', //1441(container)
     },
     extend: {
+      backgroundImage: {
+        'chat-tile': "url('assets/chat-tile.png')",
+      },
       theme: {
         colors: {
           // transparent: 'transparent',

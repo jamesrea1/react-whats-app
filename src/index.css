@@ -122,3 +122,34 @@
     }
   }
 }
+
+/*
+@media (max-width: 800px)
+html[dir=ltr] ._2wUmf, html[dir=rtl] ._2wUmf {
+    padding-right: 5%;
+    padding-left: 5%;
+}
+@media (max-width: 856px)
+html[dir=ltr] ._2wUmf, html[dir=rtl] ._2wUmf {
+    padding-right: 5.5%;
+    padding-left: 5.5%;
+}
+@media (max-width: 912px)
+html[dir=ltr] ._2wUmf, html[dir=rtl] ._2wUmf {
+    padding-right: 6%;
+    padding-left: 6%;
+}
+@media (max-width: 968px)
+html[dir=ltr] ._2wUmf, html[dir=rtl] ._2wUmf {
+    padding-right: 6.5%;
+    padding-left: 6.5%;
+}
+@media (max-width: 1024px)
+html[dir=ltr] ._2wUmf, html[dir=rtl] ._2wUmf {
+    padding-right: 7%;
+    padding-left: 7%;
+}
+html[dir=ltr] ._2wUmf, html[dir=rtl] ._2wUmf {
+    padding-right: 9%;
+    padding-left: 9%;
+} */

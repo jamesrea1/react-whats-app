@@ -1,7 +1,9 @@
 import { ActiveChatProvider } from 'context/ActiveChatContext';
-import { useAuth } from 'context/AuthContext';
-import ChatList from './ChatList';
+import { ChatListHeader, ChatListSearch, ChatList } from './ChatList';
+import { ConversationHeader, Conversation, ComposeBox } from './Conversation';
+import { useActiveChat } from 'context/ActiveChatContext';
 import NewChat from './NewChat';
+import React from 'react';
 
 function AuthenticatedApp() {
   return (
@@ -12,6 +14,8 @@ function AuthenticatedApp() {
 }
 
 function PrimaryLayout() {
+  const { contact } = useActiveChat();
+
   return (
     <LayoutWrapper>
       <ChatListPanel>
@@ -20,7 +24,15 @@ function PrimaryLayout() {
         <ChatList />
       </ChatListPanel>
       <ConversationPanel>
-        <NewChat />
+        {contact ? (
+          <>
+            <ConversationHeader />
+            <Conversation />
+            <ComposeBox />
+          </>
+        ) : (
+          <IntroPanel />
+        )}
       </ConversationPanel>
     </LayoutWrapper>
   );
@@ -30,7 +42,9 @@ function LayoutWrapper({ children }) {
   return (
     <div className="app-wrapper">
       <div className="app-wrapper__inner">
-        <div className="flex w-full h-full overflow-hidden">{children}</div>
+        <div className="flex items-stretch w-full h-full overflow-hidden">
+          {children}
+        </div>
       </div>
     </div>
   );
@@ -46,153 +60,42 @@ function ChatListPanel({ children }) {
 
 function ConversationPanel({ children }) {
   return (
-    <div className="h-full flex-[60%] md:flex-[65%] xl:flex-[70%]">
-      <div className="h-full flex flex-col bg-gray-200">{children}</div>
+    <div className="h-full flex-[60%] md:flex-[65%] xl:flex-[70%] border-l border-[#dddddd]">
+      <div className="h-full flex flex-col items-stretch bg-[#e5ddd5]">
+        {children}
+      </div>
     </div>
   );
 }
 
-function ChatListHeader() {
-  const { authUser } = useAuth();
-
+function IntroPanel() {
   return (
-    <div className="px-4 py-2.5 flex items-center justify-between bg-[#ededed]">
-      <div className="flex-none">
-        <button className="w-10 h-10 flex items-center justify-center">
-          <img
-            className="w-full h-full rounded-full object-cover"
-            src={authUser.photoURL || 'default-avatar.svg'}
-            alt={authUser.displayName}
-          />
-        </button>
-      </div>
-      <div className="flex flex-none ml-4">
-        <button
-          type="button"
-          className="w-10 h-10 inline-flex items-center justify-center rounded-full active:bg-black/10 transition-colors ease-out duration-300 active:duration-100"
-        >
-          <svg viewBox="0 0 24 24" width="24" height="24">
+    <div className="px-8 relative flex-auto flex flex-col justify-center items-center bg-[#f8f9fa]">
+      <div className="h-32 w-32">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60">
+          <g fill="none" fillRule="evenodd">
             <path
-              fill="currentColor"
-              d="M12 20.664a9.163 9.163 0 0 1-6.521-2.702.977.977 0 0 1 1.381-1.381 7.269 7.269 0 0 0 10.024.244.977.977 0 0 1 1.313 1.445A9.192 9.192 0 0 1 12 20.664zm7.965-6.112a.977.977 0 0 1-.944-1.229 7.26 7.26 0 0 0-4.8-8.804.977.977 0 0 1 .594-1.86 9.212 9.212 0 0 1 6.092 11.169.976.976 0 0 1-.942.724zm-16.025-.39a.977.977 0 0 1-.953-.769 9.21 9.21 0 0 1 6.626-10.86.975.975 0 1 1 .52 1.882l-.015.004a7.259 7.259 0 0 0-5.223 8.558.978.978 0 0 1-.955 1.185z"
-            ></path>
-          </svg>
-        </button>
-        <button
-          type="button"
-          className="w-10 h-10 ml-2 inline-flex items-center justify-center rounded-full active:bg-black/10 transition-colors ease-out duration-300 active:duration-100"
-        >
-          <svg viewBox="0 0 24 24" width="24" height="24">
+              d="M30 60c16.569 0 30-13.431 30-30C60 13.431 46.569 0 30 0 13.431 0 0 13.431 0 30c0 16.569 13.431 30 30 30Z"
+              fill="#4adf83"
+            />
             <path
-              fill="currentColor"
-              d="M19.005 3.175H4.674C3.642 3.175 3 3.789 3 4.821V21.02l3.544-3.514h12.461c1.033 0 2.064-1.06 2.064-2.093V4.821c-.001-1.032-1.032-1.646-2.064-1.646zm-4.989 9.869H7.041V11.1h6.975v1.944zm3-4H7.041V7.1h9.975v1.944z"
-            ></path>
-          </svg>
-        </button>
-        <button
-          type="button"
-          className="w-10 h-10 ml-2 inline-flex items-center justify-center rounded-full active:bg-black/10 transition-colors ease-out duration-300 active:duration-100"
-        >
-          <svg viewBox="0 0 24 24" width="24" height="24">
-            <path
-              fill="currentColor"
-              d="M12 7a2 2 0 1 0-.001-4.001A2 2 0 0 0 12 7zm0 2a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 9zm0 6a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 15z"
-            ></path>
-          </svg>
-        </button>
+              d="M30.071 46.221a16.34 16.34 0 0 1-7.885-2.014l-9.032 2.87 2.944-8.685a16.022 16.022 0 0 1-2.34-8.358c0-8.94 7.303-16.188 16.314-16.188 9.009 0 16.313 7.247 16.313 16.188 0 8.94-7.304 16.187-16.314 16.187Zm0-29.797c-7.563 0-13.715 6.105-13.715 13.61 0 2.977.97 5.735 2.612 7.979l-1.713 5.054 5.27-1.675a13.708 13.708 0 0 0 7.546 2.251c7.562 0 13.716-6.105 13.716-13.609s-6.154-13.61-13.716-13.61Zm8.238 17.338c-.1-.165-.367-.265-.766-.463-.4-.199-2.367-1.159-2.733-1.29-.367-.133-.634-.2-.9.198-.266.397-1.033 1.29-1.267 1.555-.233.265-.466.298-.866.1-.4-.199-1.688-.618-3.216-1.97-1.188-1.051-1.991-2.35-2.224-2.747-.233-.397-.025-.612.175-.81.18-.177.4-.463.6-.694.2-.232.267-.397.4-.662s.067-.496-.033-.695c-.1-.199-.9-2.151-1.234-2.946-.333-.794-.665-.661-.9-.661-.233 0-.5-.034-.766-.034s-.7.1-1.066.497c-.367.397-1.4 1.357-1.4 3.31 0 1.952 1.433 3.838 1.633 4.102.2.265 2.766 4.402 6.83 5.99 4.067 1.589 4.067 1.059 4.8.993.733-.066 2.365-.96 2.7-1.886.332-.927.332-1.722.233-1.887Z"
+              fill="#FFF"
+            />
+          </g>
+        </svg>
       </div>
-    </div>
-  );
-}
-
-function ChatListSearch() {
-  return (
-    <div className="relative flex-none h-[50px] bg-[#f6f6f6]">
-      <div className="absolute top-[7px] left-3 right-[14px] h-[35px] rounded-full bg-white">
-        <div className="w-full h-full flex items-center pl-[66px] pr-8">
-          <input
-            className="h-5 w-full outline-none text-sm leading-none"
-            placeholder="Search or start new chat "
-          />
-        </div>
-      </div>
-      <div className="absolute top-3 left-6 w-6 h-6">
-        <IconSearch />
-      </div>
-      <div className="absolute top-3 right-6 w-6 h-6 hidden">
-        <IconLoading />
-      </div>
-    </div>
-  );
-}
-
-function IconSearch() {
-  return (
-    <svg viewBox="0 0 24 24" width="24" height="24">
-      <path
-        fill="currentColor"
-        d="M15.009 13.805h-.636l-.22-.219a5.184 5.184 0 0 0 1.256-3.386 5.207 5.207 0 1 0-5.207 5.208 5.183 5.183 0 0 0 3.385-1.255l.221.22v.635l4.004 3.999 1.194-1.195-3.997-4.007zm-4.808 0a3.605 3.605 0 1 1 0-7.21 3.605 3.605 0 0 1 0 7.21z"
-      ></path>
-    </svg>
-  );
-}
-
-function IconCancel() {
-  return (
-    <svg viewBox="0 0 24 24" width="24" height="24">
-      <path
-        fill="currentColor"
-        d="M17.25 7.8L16.2 6.75l-4.2 4.2-4.2-4.2L6.75 7.8l4.2 4.2-4.2 4.2 1.05 1.05 4.2-4.2 4.2 4.2 1.05-1.05-4.2-4.2 4.2-4.2z"
-      ></path>
-    </svg>
-  );
-}
-
-function IconBack() {
-  return (
-    <div className="text-[#33b7f6]">
-      <svg viewBox="0 0 24 24" width="24" height="24">
-        <path
-          fill="currentColor"
-          d="M12 4l1.4 1.4L7.8 11H20v2H7.8l5.6 5.6L12 20l-8-8 8-8z"
-        ></path>
-      </svg>
-    </div>
-  );
-}
-
-function IconLoading() {
-  return (
-    <div className="loading w-5 h-5 text-black">
-      <svg
-        className="animate-spin"
-        width="20"
-        height="20"
-        viewBox="0 0 45 45"
-        role="status"
-      >
-        <circle
-          className="loading__circle"
-          cx="22.5"
-          cy="22.5"
-          r="20"
-          fill="none"
-          strokeWidth="5"
-        ></circle>
-      </svg>
+      <h1 className="mt-10 text-center text-3xl font-light text-[#525252]">
+        Select a contact and start messaging!
+      </h1>
+      <p className="mt-4 text-center text-sm text-gray-400">
+        Open your <span className="text-[#0aa545]">contacts</span> list to start
+        a new chat
+      </p>
+      <div className=""></div>
+      <div className="absolute w-full h-1.5 bottom-0 bg-[#4adf83]"></div>
     </div>
   );
 }
 
 export default AuthenticatedApp;
-
-// .arrow{
-//     opacity: 1;
-//     transform: scale(1) rotate(1turn);
-// }
-
-// .search{
-//   opacity: 0;
-//   transition: all .24s cubic - bezier(.4, 0, .2, 1) .06s;
-//   transform: rotate(135deg);
-// }
