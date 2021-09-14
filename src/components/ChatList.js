@@ -15,16 +15,25 @@ function ChatList() {
 
 function Chat({ chat }) {
   const { contact, lastMsg } = chat;
-  const { setContact } = useActiveChat();
+  const {
+    contact: activeContact,
+    setContact: setActiveContact,
+  } = useActiveChat();
 
   const handleOpenChat = (e) => {
-    setContact(chat.contact);
+    setActiveContact(contact);
   };
 
   return (
     <button
       onClick={handleOpenChat}
-      className="chat-list-item h-[72px] w-full block text-left bg-white hover:bg-[#f5f5f5]"
+      className={`chat-list-item h-[72px] w-full block text-left transition-colors
+        ${
+          contact.uid === activeContact.uid
+            ? 'bg-[#ebebeb] hover:bg-[#ebebeb]'
+            : 'bg-white hover:bg-[#f5f5f5]'
+        }
+      `}
     >
       <div className="w-full h-full flex items-stretch">
         <div className="pl-3.5 pr-4 flex items-center flex-none">
@@ -37,7 +46,15 @@ function Chat({ chat }) {
           </div>
         </div>
 
-        <div className="chat-list-item__details pr-4 flex flex-col justify-center flex-auto min-w-0 border-t border-[#f5f5f5]">
+        <div
+          className={`chat-list-item__details pr-4 flex flex-col justify-center flex-auto min-w-0 border-t
+          ${
+            contact.uid === activeContact.uid
+              ? 'border-[#ebebeb]'
+              : 'border-[#f5f5f5]'
+          }
+        `}
+        >
           <div className="flex justify-between items-center">
             <span className="inline-block text-lg text-black leading-6 overflow-hidden overflow-ellipsis whitespace-nowrap">
               {contact.displayName}
