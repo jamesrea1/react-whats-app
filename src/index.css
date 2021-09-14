@@ -121,6 +121,19 @@
       stroke-dashoffset: -124;
     }
   }
+
+  .msg-input--is-focussed {
+    background-color: #e4f3ff;
+    animation: msg-input-focus 100ms 200ms ease forwards;
+  }
+  @keyframes msg-input-focus {
+    0% {
+      background-color: #e4f3ff;
+    }
+    100% {
+      background-color: white;
+    }
+  }
 }
 
 /*

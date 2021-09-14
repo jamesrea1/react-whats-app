@@ -1,6 +1,10 @@
 import { ActiveChatProvider } from 'context/ActiveChatContext';
 import { ChatListHeader, ChatListSearch, ChatList } from './ChatList';
-import { ConversationHeader, Conversation, ComposeBox } from './Conversation';
+import {
+  ConversationHeader,
+  Conversation,
+  MsgComposeBox,
+} from './Conversation';
 import { useActiveChat } from 'context/ActiveChatContext';
 import NewChat from './NewChat';
 import React from 'react';
@@ -28,7 +32,7 @@ function PrimaryLayout() {
           <>
             <ConversationHeader />
             <Conversation />
-            <ComposeBox />
+            <MsgComposeBox />
           </>
         ) : (
           <IntroPanel />

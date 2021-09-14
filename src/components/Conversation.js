@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { db, firebase } from 'lib/firebase';
 import { useAuth } from 'context/AuthContext';
 import { useActiveChat } from 'context/ActiveChatContext';
 import useInput from 'utils/useInput';
 import { formatMsgDate } from 'utils/dates';
+import TextareaAutosize from 'react-textarea-autosize';
 
 function useConversation() {
   const { authUser } = useAuth();
@@ -112,12 +113,15 @@ function Conversation() {
   // >   white-space: pre-wrap;
 
   return (
-    <div className="p-4 relative z-0 flex-1 flex flex-col overflow-x-hidden overflow-y-scroll select-text">
+    <div className="flex-1 w-full relative z-0 ">
       <div
-        className="absolute w-full h-full top-0 bg-chat-tile bg-repeat opacity-10"
+        className="absolute inset-0 bg-chat-tile bg-repeat opacity-10"
         style={{ zIndex: '-1' }}
       ></div>
-      {msgs && msgs.map((m) => <Message key={m.id} msg={m} />)}
+
+      <div className="absolute inset-0  p-4 flex flex-col overflow-x-hidden overflow-y-scroll select-text">
+        {msgs && msgs.map((m) => <Message key={m.id} msg={m} />)}
+      </div>
     </div>
   );
 }
@@ -146,10 +150,10 @@ function Message({ msg }) {
   );
 }
 
-function ComposeBox() {
+function MsgComposeBox() {
   const { authUser } = useAuth();
   const { contact } = useActiveChat();
-  const composeMsgInput = useInput();
+  const input = useInput();
 
   const getDerivedChatKey = (user1, user2) => {
     return user1 < user2 ? `${user1}_${user2}` : `${user2}_${user1}`;
@@ -161,7 +165,7 @@ function ComposeBox() {
     db.collection(`chats/${chatId}/msgs`)
       .add({
         author: authUser.uid,
-        text: composeMsgInput.value,
+        text: input.value,
         sentAt: firebase.firestore.FieldValue.serverTimestamp(),
       })
       .then((res) => {
@@ -170,12 +174,12 @@ function ComposeBox() {
       .catch((error) => {
         console.log(error);
       });
-    composeMsgInput.setValue('');
+    input.setValue('');
   };
 
   return (
-    <div className="px-4 py-3 flex-none flex items-center      bg-[#f0f0f0]    [ border-b-4 border-[#666] ]">
-      <div>
+    <div className="px-4 py-3 flex-none flex items-end bg-[#f0f0f0]">
+      <div className="flex-none">
         <button
           type="button"
           className="w-10 h-10 mr-0.5 inline-flex items-center justify-center rounded-full active:bg-black/10 transition-colors ease-out duration-300 active:duration-100"
@@ -184,34 +188,70 @@ function ComposeBox() {
         </button>
         <button
           type="button"
-          className="w-10 h-10 mr-3 inline-flex items-center justify-center rounded-full active:bg-black/10 transition-colors ease-out duration-300 active:duration-100"
+          className="w-10 h-10 mr-0.5 inline-flex items-center justify-center rounded-full active:bg-black/10 transition-colors ease-out duration-300 active:duration-100"
         >
           <IconClip />
         </button>
       </div>
 
-      <form onSubmit={handleMsgSubmit} className="flex-auto">
-        <div className="flex">
-          <MsgInput composeMsgInput={composeMsgInput} />
-          <button
-            type="button"
-            className="w-10 h-10  inline-flex items-center justify-center rounded-full active:bg-black/10 transition-colors ease-out duration-300 active:duration-100"
-          >
-            <IconSend />
-          </button>{' '}
-        </div>
+      <form onSubmit={handleMsgSubmit} className="w-full flex items-end">
+        <MsgInput
+          value={input.value}
+          onChange={input.onChange}
+          handleMsgSubmit={handleMsgSubmit}
+        />
+        <button
+          type="submit"
+          disabled={!input.value}
+          className="
+            w-10 h-10 flex-none inline-flex items-center justify-center rounded-full active:bg-black/10 transition-colors ease-out duration-300 active:duration-100
+            disabled:opacity-30 disabled:cursor-default
+          "
+        >
+          <IconSend />
+        </button>
       </form>
     </div>
   );
 }
 
-function MsgInput({ composeMsgInput }) {
+function MsgInput({ value, onChange, handleMsgSubmit }) {
+  const [isFocussed, setIsFocussed] = useState(false);
+  const { contact } = useActiveChat();
+  const textAreaRef = useRef(null);
+
+  useEffect(() => {
+    textAreaRef.current.focus();
+  }, [contact]);
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && e.shiftKey === false) {
+      handleMsgSubmit(e);
+    }
+  };
+
   return (
-    <div className="flex items-center bg-white rounded-full px-4 py-2">
-      <input
-        {...composeMsgInput.attrs}
+    <div
+      className={`w-full min-h-[40px] px-4 py-2 mx-3 flex items-center rounded-3xl
+        ${isFocussed ? 'msg-input--is-focussed' : 'bg-white'}
+      `}
+    >
+      <TextareaAutosize
+        value={value}
+        onChange={onChange}
+        onFocus={(e) => setIsFocussed(true)}
+        onBlur={(e) => setIsFocussed(false)}
+        // onHeightChange={(height) => console.log(height)}
+        cacheMeasurements
+        minRows={1}
+        maxRows={5}
+        // autoFocus
+        ref={textAreaRef}
+        onKeyDown={handleKeyDown}
         placeholder="Type a message"
-        className="text-[15px] text-gray-700 placeholder-gray-400 outline-none flex-auto"
+        className="flex-1 w-full pr-1 resize-none outline-none bg-transparent
+          text-[15px] leading-5 text-gray-700 placeholder-gray-400
+        "
       />
     </div>
   );
@@ -250,4 +290,4 @@ function IconSend() {
   );
 }
 
-export { ConversationHeader, Conversation, ComposeBox };
+export { ConversationHeader, Conversation, MsgComposeBox };
