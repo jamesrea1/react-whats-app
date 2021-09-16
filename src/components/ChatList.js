@@ -29,7 +29,7 @@ function Chat({ chat }) {
       onClick={handleOpenChat}
       className={`chat-list-item h-[72px] w-full block text-left transition-colors
         ${
-          contact.uid === activeContact.uid
+          activeContact && contact.uid === activeContact.uid
             ? 'bg-[#ebebeb] hover:bg-[#ebebeb]'
             : 'bg-white hover:bg-[#f5f5f5]'
         }
@@ -49,7 +49,7 @@ function Chat({ chat }) {
         <div
           className={`chat-list-item__details pr-4 flex flex-col justify-center flex-auto min-w-0 border-t
           ${
-            contact.uid === activeContact.uid
+            activeContact && contact.uid === activeContact.uid
               ? 'border-[#ebebeb]'
               : 'border-[#f5f5f5]'
           }

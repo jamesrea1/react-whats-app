@@ -45,8 +45,8 @@ function PrimaryLayout() {
 function LayoutWrapper({ children }) {
   return (
     <div className="app-wrapper">
-      <div className="app-wrapper__inner">
-        <div className="flex items-stretch w-full h-full overflow-hidden">
+      <div className="app-wrapper__inner overflow-x-auto sm:overflow-x-hidden">
+        <div className="flex items-stretch w-full h-full overflow-hidden min-w-[650px]">
           {children}
         </div>
       </div>
@@ -64,8 +64,8 @@ function ChatListPanel({ children }) {
 
 function ConversationPanel({ children }) {
   return (
-    <div className="h-full flex-[60%] md:flex-[65%] xl:flex-[70%] border-l border-[#dddddd]">
-      <div className="h-full flex flex-col items-stretch bg-[#e5ddd5]">
+    <div className="min-w-0 h-full flex-[60%] md:flex-[65%] xl:flex-[70%] border-l border-[#dddddd]">
+      <div className="h-full flex flex-col Xitems-stretch bg-[#e5ddd5]">
         {children}
       </div>
     </div>

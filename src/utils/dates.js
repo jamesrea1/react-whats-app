@@ -5,25 +5,25 @@ import differenceInCalendarDays from 'date-fns/differenceInCalendarDays';
 // import { daysToWeeks } from 'date-fns';
 // import isSameDay from 'date-fns/isSameDay';
 
-function formatChatListDate(date) {
+function formatChatListDate(date, todayFormat = 'HH:mm') {
   if (isToday(date)) {
-    return format(date, 'H:mm');
+    return format(date, todayFormat);
   }
   if (isYesterday(date)) {
-    return 'yesterday';
+    return 'Yesterday';
   }
-  if (differenceInCalendarDays(date, new Date()) <= 7) {
-    return format(date, 'EEEE');
+  if (differenceInCalendarDays(new Date(),date) < 7) {
+  return format(date, 'EEEE');
   }
 
   return format(date, 'dd/MM/yyyy');
 }
 
-function formatMsgDate(date) {
-  return formatChatListDate(date);
+function formatMsgTime(date) {
+  return format(date, 'H:mm');
 }
 
-export { formatChatListDate, formatMsgDate };
+export { formatChatListDate, formatMsgTime };
 
 /*
 dateMarkerFormat()

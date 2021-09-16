@@ -1,12 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { db, firebase } from 'lib/firebase';
 import { useAuth } from 'context/AuthContext';
 import { useActiveChat } from 'context/ActiveChatContext';
 import useInput from 'utils/useInput';
-import { formatMsgDate } from 'utils/dates';
+import { formatChatListDate, formatMsgTime } from 'utils/dates';
 import TextareaAutosize from 'react-textarea-autosize';
+import isSameDay from 'date-fns/isSameDay'
 
-function useConversation() {
+function useMsgs() {
   const { authUser } = useAuth();
   const { contact } = useActiveChat();
   const [msgs, setMsgs] = useState([]);
@@ -44,16 +45,8 @@ function useConversation() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authUser, contact]);
 
-  /* set chat document after new msg */
   useEffect(() => {
-    // TRIGGER - CREATE CHAT DOC & UPDATE LASTMSG INFO
-    //
-    // only set a chat obj when first message is posted (dont wnat a chat object if no messages)
-    // update chat.lastMsg obj with every new msg
-    //
-    // OR.. set both after every msg? (same object - 1 write)
-    //
-    // CLOUD FUNCTIONS???
+    // TODO - cloud function triggers
 
     if (msgs.length > 0) {
       const chatId = getDerivedChatKey(authUser.uid, contact.uid);
@@ -105,47 +98,167 @@ function ConversationHeader() {
 }
 
 function Conversation() {
-  const msgs = useConversation();
-  // e5ddd5
-  // 1 1 0
-  // > 100, 100 - flex-col
-  // >   overflow-wrap: break-word;
-  // >   white-space: pre-wrap;
+  const msgs = useMsgs();
 
   return (
-    <div className="flex-1 w-full relative z-0 ">
+    <div className="flex-1 w-full relative z-0">
       <div
         className="absolute inset-0 bg-chat-tile bg-repeat opacity-10"
         style={{ zIndex: '-1' }}
       ></div>
+      <div
+        className={`msgs-container pt-3 pb-2 absolute inset-0 flex flex-col overflow-x-hidden overflow-y-auto select-text`}
+      >
+        {msgs && msgs.map((msg, idx, arr) => {
+          const previous = arr[idx - 1];
+          const showDateMarker = shouldShowDateMarker(msg, previous);
+          const position = getMsgPosition(msg, idx, arr);
 
-      <div className="absolute inset-0  p-4 flex flex-col overflow-x-hidden overflow-y-scroll select-text">
-        {msgs && msgs.map((m) => <Message key={m.id} msg={m} />)}
+          return (
+            <React.Fragment key={msg.id}>
+              {showDateMarker && <DateMarker date={msg.sentAt} />}
+              <Message msg={msg} position={position} />
+            </React.Fragment>
+          );
+
+        })}
       </div>
     </div>
   );
 }
 
-function Message({ msg }) {
-  //flex end
-  //    overflow-wrap: break-word;
-  //white-space: pre-wrap;
-  //redus 7.5px
-  //shadow
-  // max-w 95,85,75,65
+function getMsgPosition(msg, idx, arr) {
+  const prev = arr[idx - 1];
+  const next = arr[idx + 1];
 
+  const userPrev = prev && prev.author === msg.author && isSameDay(prev.sentAt, msg.sentAt);
+  const userNext = next && next.author === msg.author && isSameDay(next.sentAt, msg.sentAt);
+
+  const isSingle = !userPrev && !userNext;
+  if (isSingle) {
+    return "SINGLE";
+  }
+
+  const isFront = !userPrev;
+  if (isFront) {
+    return 'FRONT';
+  }
+
+  const isEnd = !userNext;
+  if (isEnd) {
+    return 'END';
+  }
+
+  return 'MID';
+}
+
+function DateMarker({date}) {
   return (
-    <div className="flex mb-8">
+    <div className="flex justify-center">
+      <div className="mb-3 pt-2 pb-2.5 px-3.5 text-xs text-gray-800 leading-4 rounded-md bg-[#e1f3fb] shadow">
+        {formatChatListDate(date, "'TODAY'").toUpperCase()}
+      </div>
+    </div>
+  );
+}
+
+function shouldShowDateMarker(msg, previous) {
+  const isFirst = !previous;
+  if (isFirst) {
+    return true;
+  }
+
+  const isFirstOfDay = !isSameDay(msg.sentAt, previous.sentAt);
+  if (isFirstOfDay) {
+    return true;
+  }
+
+  return false;
+}
+
+function Message({ msg, position }) {
+  return (
+    <div
+      className={`flex flex-col ${msg.sentByMe ? 'items-end' : 'items-start'}`}
+    >
       <div
-        className={`rounded-md ${
-          msg.sentByMe ? 'ml-auto bg-green-100' : 'bg-white'
-        }`}
+        className={`relative max-w-[95%] md:max-w-[85%] lg:max-w-[75%] xl:max-w-[65%]
+         ${['SINGLE', 'END'].includes(position) ? 'mb-4':'mb-1'}
+        `}
       >
-        <div className="max-w-sm  px-3 py-2  text-sm}">
-          <p>{msg.text}</p>
-          <p>{formatMsgDate(msg.sentAt)}</p>
+        {['SINGLE', 'FRONT'].includes(position) && <MsgTail msg={msg} />}
+        <div
+          className={`rounded-md shadow ${
+            msg.sentByMe
+              ? 'bg-[#dcf8c6] rounded-tr-none'
+              : 'bg-white rounded-tl-none'
+          }`}
+        >
+          <div className="pt-1.5 pr-[7px] pb-2 pl-[9px]">
+            <MessageText msg={msg} />
+            <MessageMeta msg={msg} />
+            <div>DEBUG: {position}</div>
+          </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function MsgTail({ msg }) {
+  const tailOut = (
+    <svg viewBox="0 0 8 13" width="8" height="13">
+      <path
+        opacity=".15"
+        d="M5.188 1H0v11.193l6.467-8.625C7.526 2.156 6.958 1 5.188 1z"
+      ></path>
+      <path
+        fill="currentColor"
+        d="M5.188 0H0v11.193l6.467-8.625C7.526 1.156 6.958 0 5.188 0z"
+      ></path>
+    </svg>
+  );
+  const tailIn = (
+    <svg viewBox="0 0 8 13" width="8" height="13">
+      <path
+        opacity=".15"
+        fill="#0000000"
+        d="M1.533 3.568L8 12.193V1H2.812C1.042 1 .474 2.156 1.533 3.568z"
+      ></path>
+      <path
+        fill="currentColor"
+        d="M1.533 2.568L8 11.193V0H2.812C1.042 0 .474 1.156 1.533 2.568z"
+      ></path>
+    </svg>
+  );
+
+  return (
+    <div
+      className={`absolute w-2 h-[13px] top-0
+        ${msg.sentByMe ? '-right-2 text-[#dcf8c6]' : '-left-2 text-white'}
+      `}
+    >
+      {msg.sentByMe ? tailOut : tailIn}
+    </div>
+  );
+}
+
+function MessageText({ msg }) {
+  return (
+    <div className="text-sm text-[#303030] break-words whitespace-pre-wrap">
+      <span>{msg.text}</span>
+      <span className="inline-block w-16 align-middle"></span>
+    </div>
+  );
+}
+
+function MessageMeta({ msg }) {
+  return (
+    <div
+      className="float-right text-[#8c8c8c] text-[11px] leading-[15px] h-[15px]"
+      style={{ margin: '-10px 0 -5px 4px' }}
+    >
+      {formatMsgTime(msg.sentAt)}
     </div>
   );
 }
@@ -178,7 +291,7 @@ function MsgComposeBox() {
   };
 
   return (
-    <div className="px-4 py-3 flex-none flex items-end bg-[#f0f0f0]">
+    <div className="px-4 py-2 flex-none flex items-end bg-[#f0f0f0]">
       <div className="flex-none">
         <button
           type="button"

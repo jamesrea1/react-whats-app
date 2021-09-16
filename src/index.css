@@ -65,6 +65,11 @@
     background-color: #f7f7f7;
   }
 
+  /* @media screen and (max-width: 650px) {
+  .app-wrapper__inner {
+  }
+  } */
+
   @media screen and (min-width: 1441px) {
     .app-wrapper__inner {
       top: 19px;
@@ -105,7 +110,6 @@
     stroke-linecap: round;
     animation: loading__circle 1.5s ease-in-out infinite;
   }
-
   @keyframes loading__circle {
     0% {
       stroke-dasharray: 1, 150;
@@ -115,7 +119,6 @@
       stroke-dasharray: 90, 150;
       stroke-dashoffset: -35;
     }
-
     100% {
       stroke-dasharray: 90, 150;
       stroke-dashoffset: -124;
@@ -134,35 +137,52 @@
       background-color: white;
     }
   }
-}
 
-/*
-@media (max-width: 800px)
-html[dir=ltr] ._2wUmf, html[dir=rtl] ._2wUmf {
+  .msgs-container {
     padding-right: 5%;
     padding-left: 5%;
+  }
+
+  @media (min-width: 801px) {
+    .msgs-container {
+      padding-right: 5.5%;
+      padding-left: 5.5%;
+    }
+  }
+  @media (min-width: 856px) {
+    .msgs-container {
+      padding-right: 6%;
+      padding-left: 6%;
+    }
+  }
+  @media (min-width: 912px) {
+    .msgs-container {
+      padding-right: 6.5%;
+      padding-left: 6.5%;
+    }
+  }
+  @media (min-width: 968px) {
+    .msgs-container {
+      padding-right: 7%;
+      padding-left: 7%;
+    }
+  }
+  @media (min-width: 1024px) {
+    .msgs-container {
+      padding-right: 7.5%;
+      padding-left: 7.5%;
+    }
+  }
+  @media (min-width: 1088px) {
+    .msgs-container {
+      padding-right: 8%;
+      padding-left: 8%;
+    }
+  }
+  @media (min-width: 1152px) {
+    .msgs-container {
+      padding-right: 8.5%;
+      padding-left: 8.5%;
+    }
+  }
 }
-@media (max-width: 856px)
-html[dir=ltr] ._2wUmf, html[dir=rtl] ._2wUmf {
-    padding-right: 5.5%;
-    padding-left: 5.5%;
-}
-@media (max-width: 912px)
-html[dir=ltr] ._2wUmf, html[dir=rtl] ._2wUmf {
-    padding-right: 6%;
-    padding-left: 6%;
-}
-@media (max-width: 968px)
-html[dir=ltr] ._2wUmf, html[dir=rtl] ._2wUmf {
-    padding-right: 6.5%;
-    padding-left: 6.5%;
-}
-@media (max-width: 1024px)
-html[dir=ltr] ._2wUmf, html[dir=rtl] ._2wUmf {
-    padding-right: 7%;
-    padding-left: 7%;
-}
-html[dir=ltr] ._2wUmf, html[dir=rtl] ._2wUmf {
-    padding-right: 9%;
-    padding-left: 9%;
-} */
