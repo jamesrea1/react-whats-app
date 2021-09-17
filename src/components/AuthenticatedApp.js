@@ -6,7 +6,6 @@ import {
   MsgComposeBox,
 } from './Conversation';
 import { useActiveChat } from 'context/ActiveChatContext';
-import NewChat from './NewChat';
 import React from 'react';
 
 function AuthenticatedApp() {

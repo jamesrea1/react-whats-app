@@ -4,7 +4,7 @@ function Seed() {
   const seedChat = () => {
     const batch = db.batch();
 
-    Object.entries(chatsData).forEach(([id, chatData]) => {
+    Object.entries(chatsTestUser).forEach(([id, chatData]) => {
       const chatRef = db.doc(`chats/${id}`);
       batch.set(chatRef, chatData);
     });
@@ -46,10 +46,13 @@ function Seed() {
 export default Seed;
 
 const users = {
-  james: 'IPy5AoZF7caQgFyOL1X5PlfM5CP2',
-  ste: 'XfLoq3OnKwUnIWqvZFy1kchfqz83',
-  jake: 'VnweQsAZpvZbFJ05MeHL03kErto2',
-  kate: 'sYV6FpFVqNRdrV0RYaYfWVYrkTv2',
+  testUser: '0KnCJwEqiMP9xAMrh5Jomb0qtdE2',
+  jim: 'IPy5AoZF7caQgFyOL1X5PlfM5CP2',
+  harold: 'VnweQsAZpvZbFJ05MeHL03kErto2',
+  lou: 'XfLoq3OnKwUnIWqvZFy1kchfqz83',
+  madge: 'CmauC0AoDFagG6pJYlpas0KC9Ej1',
+  susan: 'sYV6FpFVqNRdrV0RYaYfWVYrkTv2',
+  daphne: 'HZK3CSV0mXYe90wU9ZImT2favQD3',
 };
 
 function getDerivedChatKey(user1, user2) {
@@ -149,7 +152,6 @@ const msgsData = {
       ),
     },
   ],
-
   [getDerivedChatKey(users.james, users.jake)]: [
     {
       author: users.james,
@@ -167,4 +169,90 @@ const msgsData = {
       ),
     },
   ],
+};
+
+
+const members = {
+  testUser: {
+    uid: users.testUser,
+    displayName: 'Test User',
+    photoURL: 'testUser.jpg',
+  },
+
+  jim: {
+    uid: users.jim,
+    displayName: 'Jim',
+    photoURL: 'jim.jpg',
+  },
+  harold: {
+    uid: users.harold,
+    displayName: 'Harold',
+    photoURL: 'harold.jpg',
+  },
+  lou: {
+    uid: users.lou,
+    displayName: 'Lou',
+    photoURL: 'lou.jpg',
+  },
+  madge: {
+    uid: users.madge,
+    displayName: 'Madge',
+    photoURL: 'madge.jpg',
+  },
+  susan: {
+    uid: users.susan,
+    displayName: 'Susan',
+    photoURL: 'susan.jpg',
+  },
+  daphne: {
+    uid: users.daphne,
+    displayName: 'Daphne',
+    photoURL: 'daphne.jpg',
+  },
+};
+
+
+const chatsTestUser = {
+  [getDerivedChatKey(users.testUser, users.jim)]: {
+    members: [users.testUser, users.jim],
+    memberInfo: {
+      [users.testUser]: members.testUser,
+      [users.jim]: members.jim,
+    },
+  },
+  [getDerivedChatKey(users.testUser, users.harold)]: {
+    members: [users.testUser, users.harold],
+    memberInfo: {
+      [users.testUser]: members.testUser,
+      [users.harold]: members.harold,
+    },
+  },
+  [getDerivedChatKey(users.testUser, users.lou)]: {
+    members: [users.testUser, users.lou],
+    memberInfo: {
+      [users.testUser]: members.testUser,
+      [users.lou]: members.lou,
+    },
+  },
+  [getDerivedChatKey(users.testUser, users.madge)]: {
+    members: [users.testUser, users.madge],
+    memberInfo: {
+      [users.testUser]: members.testUser,
+      [users.madge]: members.madge,
+    },
+  },
+  [getDerivedChatKey(users.testUser, users.susan)]: {
+    members: [users.testUser, users.susan],
+    memberInfo: {
+      [users.testUser]: members.testUser,
+      [users.susan]: members.susan,
+    },
+  },
+  [getDerivedChatKey(users.testUser, users.daphne)]: {
+    members: [users.testUser, users.daphne],
+    memberInfo: {
+      [users.testUser]: members.testUser,
+      [users.daphne]: members.daphne,
+    },
+  },
 };

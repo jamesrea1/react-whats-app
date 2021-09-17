@@ -23,7 +23,7 @@ function useProvideAuth() {
           uid: firebaseUser.uid,
           displayName: firebaseUser.displayName,
           email: firebaseUser.email,
-          photoURL: firebaseUser.photoURL,
+          photoURL: firebaseUser.photoURL, //`https://i.pravatar.cc/100?u=${firebaseUser.uid}`,
         };
         setAuthUser(user);
         db.doc(`users/${user.uid}`)

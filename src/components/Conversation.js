@@ -178,27 +178,34 @@ function shouldShowDateMarker(msg, previous) {
 }
 
 function Message({ msg, position }) {
+  const hasMargin = ['SINGLE', 'END'].includes(position);
+  const hasTail = ['SINGLE', 'FRONT'].includes(position);
+
   return (
     <div
       className={`flex flex-col ${msg.sentByMe ? 'items-end' : 'items-start'}`}
     >
       <div
         className={`relative max-w-[95%] md:max-w-[85%] lg:max-w-[75%] xl:max-w-[65%]
-         ${['SINGLE', 'END'].includes(position) ? 'mb-4':'mb-1'}
+         ${hasMargin ? 'mb-4' : 'mb-1'}
         `}
       >
-        {['SINGLE', 'FRONT'].includes(position) && <MsgTail msg={msg} />}
+        {hasTail && <MsgTail msg={msg} />}
         <div
-          className={`rounded-md shadow ${
-            msg.sentByMe
-              ? 'bg-[#dcf8c6] rounded-tr-none'
-              : 'bg-white rounded-tl-none'
-          }`}
+          className={`rounded-md shadow
+            ${
+              hasTail && msg.sentByMe
+              ? 'rounded-tr-none'
+              : hasTail
+              ? 'rounded-tl-none'
+              : ''
+            }
+            ${msg.sentByMe ? 'bg-[#dcf8c6]' : 'bg-white'}
+          `}
         >
           <div className="pt-1.5 pr-[7px] pb-2 pl-[9px]">
             <MessageText msg={msg} />
             <MessageMeta msg={msg} />
-            <div>DEBUG: {position}</div>
           </div>
         </div>
       </div>
@@ -275,11 +282,14 @@ function MsgComposeBox() {
 
   const handleMsgSubmit = (e) => {
     e.preventDefault();
+    if (!input.value.trim()) {
+      return;
+    }
     const chatId = getDerivedChatKey(authUser.uid, contact.uid);
     db.collection(`chats/${chatId}/msgs`)
       .add({
         author: authUser.uid,
-        text: input.value,
+        text: input.value.trim(),
         sentAt: firebase.firestore.FieldValue.serverTimestamp(),
       })
       .then((res) => {
@@ -316,7 +326,7 @@ function MsgComposeBox() {
         />
         <button
           type="submit"
-          disabled={!input.value}
+          disabled={!input.value.trim()}
           className="
             w-10 h-10 flex-none inline-flex items-center justify-center rounded-full active:bg-black/10 transition-colors ease-out duration-300 active:duration-100
             disabled:opacity-30 disabled:cursor-default

@@ -3,7 +3,7 @@
 A project to experiment with..
 - Firebase Firestore data synchronisation
 - Firebase RTDB user presence
-- NoSQL data mdelling
+- NoSQL data modelling
 - Tailwind JIT compiler
 
 ## Technologies
@@ -15,7 +15,9 @@ A project to experiment with..
 
 ## Live Demo
 
-- (link)
+- https://react-whats-app.web.app/
+
+- To sign in, please use the credentials pre-populated in the sign in form
 
 ## Screenshots
 

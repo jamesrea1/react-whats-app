@@ -45,7 +45,7 @@ export default function ChatListHeaderDropdown() {
                   )}
                   onClick={handleSignOut}
                 >
-                  Sign out
+                  Log out
                 </button>
               )}
             </Menu.Item>
