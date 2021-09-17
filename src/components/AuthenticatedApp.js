@@ -65,7 +65,7 @@ function ChatListPanel({ children }) {
 function ConversationPanel({ children }) {
   return (
     <div className="min-w-0 h-full flex-[60%] md:flex-[65%] xl:flex-[70%] border-l border-[#dddddd]">
-      <div className="h-full flex flex-col Xitems-stretch bg-[#e5ddd5]">
+      <div className="h-full flex flex-col bg-[#e5ddd5]">
         {children}
       </div>
     </div>

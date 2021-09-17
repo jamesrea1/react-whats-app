@@ -8,9 +8,9 @@ module.exports = {
     screens: {
       sm: '650px',
       md: '901px',
-      lg: '1025px', //1025(msges)
+      lg: '1025px',
       xl: '1301px',
-      '2xl': '1441px', //1441(container)
+      '2xl': '1441px',
     },
     extend: {
       backgroundImage: {

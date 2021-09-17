@@ -2,6 +2,7 @@ import { useAuth } from 'context/AuthContext';
 import { useActiveChat } from 'context/ActiveChatContext';
 import useChatList from './useChatList';
 import { formatChatListDate } from 'utils/dates';
+import ChatListHeaderDropdown from './ChatListHeaderDropdown';
 
 function ChatList() {
   const chats = useChatList();
@@ -67,35 +68,13 @@ function Chat({ chat }) {
             <span className="inline-block text-sm text-black/60 leading-5 overflow-hidden overflow-ellipsis whitespace-nowrap">
               {lastMsg.text}
             </span>
-            <span className="inline-block ml-4">x</span>
+            <span className="inline-block ml-4"></span>
           </div>
         </div>
       </div>
     </button>
   );
 }
-
-// function Avatar() {
-//   return (
-//     <img
-//       className="w-full h-full object-cover"
-//       src={contact.photoURL}
-//       alt={contact.displayName}
-//     />
-//   );
-// }
-
-// function Button() {
-//   return (
-//     <button className="w-10 h-10 flex items-center justify-center">
-//       <img
-//         className="w-full h-full rounded-full"
-//         src={authUser.photoURL || 'default-avatar.svg'}
-//         alt={authUser.displayName}
-//       />
-//     </button>
-//   );
-// }
 
 function ChatListHeader() {
   const { authUser } = useAuth();
@@ -134,17 +113,7 @@ function ChatListHeader() {
             ></path>
           </svg>
         </button>
-        <button
-          type="button"
-          className="w-10 h-10 ml-2 inline-flex items-center justify-center rounded-full active:bg-black/10 transition-colors ease-out duration-300 active:duration-100"
-        >
-          <svg viewBox="0 0 24 24" width="24" height="24">
-            <path
-              fill="currentColor"
-              d="M12 7a2 2 0 1 0-.001-4.001A2 2 0 0 0 12 7zm0 2a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 9zm0 6a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 15z"
-            ></path>
-          </svg>
-        </button>
+        <ChatListHeaderDropdown />
       </div>
     </div>
   );
@@ -230,16 +199,5 @@ function IconLoading() {
     </div>
   );
 }
-
-// .arrow{
-//     opacity: 1;
-//     transform: scale(1) rotate(1turn);
-// }
-
-// .search{
-//   opacity: 0;
-//   transition: all .24s cubic - bezier(.4, 0, .2, 1) .06s;
-//   transform: rotate(135deg);
-// }
 
 export { ChatListHeader, ChatListSearch, ChatList };

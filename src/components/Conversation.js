@@ -80,7 +80,7 @@ function useMsgs() {
 function ConversationHeader() {
   const { contact } = useActiveChat();
   return (
-    <div className="px-4 py-2.5 flex-none flex items-center bg-[#ededed]">
+    <div className="px-4 py-2.5 flex-none flex items-center bg-[#ededed] border-b border-[#d8d8d8]">
       <div className="flex-none pr-4">
         <button className="w-10 h-10 flex items-center justify-center">
           <img
@@ -102,27 +102,28 @@ function Conversation() {
 
   return (
     <div className="flex-1 w-full relative z-0">
+
       <div
         className="absolute inset-0 bg-chat-tile bg-repeat opacity-10"
         style={{ zIndex: '-1' }}
       ></div>
-      <div
+      <ChatScroller
         className={`msgs-container pt-3 pb-2 absolute inset-0 flex flex-col overflow-x-hidden overflow-y-auto select-text`}
       >
-        {msgs && msgs.map((msg, idx, arr) => {
-          const previous = arr[idx - 1];
-          const showDateMarker = shouldShowDateMarker(msg, previous);
-          const position = getMsgPosition(msg, idx, arr);
+        {msgs &&
+          msgs.map((msg, idx, arr) => {
+            const previous = arr[idx - 1];
+            const showDateMarker = shouldShowDateMarker(msg, previous);
+            const position = getMsgPosition(msg, idx, arr);
 
-          return (
-            <React.Fragment key={msg.id}>
-              {showDateMarker && <DateMarker date={msg.sentAt} />}
-              <Message msg={msg} position={position} />
-            </React.Fragment>
-          );
-
-        })}
-      </div>
+            return (
+              <React.Fragment key={msg.id}>
+                {showDateMarker && <DateMarker date={msg.sentAt} />}
+                <Message msg={msg} position={position} />
+              </React.Fragment>
+            );
+          })}
+      </ChatScroller>
     </div>
   );
 }
@@ -400,6 +401,30 @@ function IconSend() {
         d="M1.101 21.757 23.8 12.028 1.101 2.3l.011 7.912 13.623 1.816-13.623 1.817-.011 7.912z"
       />
     </svg>
+  );
+}
+
+function ChatScroller({ children, className }) {
+  const scrollRef = useRef();
+  const shouldScrollRef = useRef(true);
+
+  useEffect(() => {
+    if (shouldScrollRef.current) {
+      const node = scrollRef.current;
+      node.scrollTop = node.scrollHeight - node.clientHeight;
+    }
+  });
+
+  const handleScroll = () => {
+    const node = scrollRef.current;
+    const atBottom = node.scrollTop === node.scrollHeight - node.clientHeight;
+    shouldScrollRef.current = atBottom;
+  };
+
+  return (
+    <div ref={scrollRef} onScroll={handleScroll} className={className}>
+      {children}
+    </div>
   );
 }
 

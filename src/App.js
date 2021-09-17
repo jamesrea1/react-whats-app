@@ -2,7 +2,7 @@ import AuthenticatedApp from 'components/AuthenticatedApp';
 import UnauthenticatedApp from 'components/UnauthenticatedApp';
 import { AuthProvider, useAuth } from 'context/AuthContext';
 
-function AuthRoutedApp() {
+function AuthRoutes() {
   const { authAttempted, authUser } = useAuth();
 
   return !authAttempted ? (
@@ -17,7 +17,7 @@ function AuthRoutedApp() {
 export default function App() {
   return (
     <AuthProvider>
-      <AuthRoutedApp />
+      <AuthRoutes />
     </AuthProvider>
   );
 }

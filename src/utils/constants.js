@@ -1,18 +1,18 @@
 const ERROR_CODES = {
-  'auth/invalid-email': 'Thrown if the email address is not valid.',
+  'auth/invalid-email': 'Invalid email address',
   'auth/user-disabled':
-    'Thrown if the user corresponding to the given email has been disabled.',
+    'The account associated with this email address has been disabled',
   'auth/user-not-found':
-    'Thrown if there is no user corresponding to the given email.',
+    'No account found for the email address you entered',
   'auth/wrong-password':
-    'Thrown if the password is invalid for the given email, or the account corresponding to the email does not have a password set.',
+    'The password you entered does not match the email address',
   'auth/email-already-in-use':
-    'Thrown if there already exists an account with the given email address.',
+    'An account already exists for this email address',
   'auth/operation-not-allowed':
-    'Thrown if email/password accounts are not enabled. Enable email/password accounts in the Firebase Console, under the Auth tab.',
-  'auth / weak - password': 'Thrown if the password is not strong enough.',
+    'Email/password accounts are not enabled',
+  'auth / weak - password': 'The password is too weak [rules]',
   'auth/requires-recent-login':
-    "Thrown if the user's last sign-in time does not meet the security threshold. Use firebase.User.reauthenticateWithCredential to resolve. This does not apply if the user is anonymous.",
+    "Please re-authenticate",
 };
 
 export { ERROR_CODES };
