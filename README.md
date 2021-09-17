@@ -17,7 +17,7 @@ A project to experiment with..
 
 - https://react-whats-app.web.app/
 
-- To sign in, please use the credentials pre-populated in the sign in form
+- Credentials are pre-populated in the sign in form - email: "testuser@example.com", password: "testuser"
 
 ## Screenshots
 
