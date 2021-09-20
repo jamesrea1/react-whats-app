@@ -1,17 +1,16 @@
-import { ActiveChatProvider } from 'context/ActiveChatContext';
-import { ChatListHeader, ChatListSearch, ChatList } from './ChatList';
-import {
-  ConversationHeader,
-  Conversation,
-  MsgComposeBox,
-} from './Conversation';
-import { useActiveChat } from 'context/ActiveChatContext';
 import React from 'react';
+import { ActiveChatProvider, useActiveChat } from 'context/ActiveChatContext';
+import { DrawerManager } from 'context/DrawerManager';
+import { ChatListHeader, ChatListSearch, ChatList } from 'components/ChatList';
+import { ConversationHeader,  Conversation,  MsgComposeBox } from 'components/Conversation';
+import NewChat from 'components/NewChat'
 
 function AuthenticatedApp() {
   return (
     <ActiveChatProvider>
-      <PrimaryLayout />
+      <DrawerManager>
+        <PrimaryLayout />
+      </DrawerManager>
     </ActiveChatProvider>
   );
 }
@@ -21,6 +20,7 @@ function PrimaryLayout() {
 
   return (
     <LayoutWrapper>
+      <NewChat />
       <ChatListPanel>
         <ChatListHeader />
         <ChatListSearch />
@@ -45,7 +45,7 @@ function LayoutWrapper({ children }) {
   return (
     <div className="app-wrapper">
       <div className="app-wrapper__inner overflow-x-auto sm:overflow-x-hidden">
-        <div className="flex items-stretch w-full h-full overflow-hidden min-w-[650px]">
+        <div className="relative flex items-stretch w-full h-full overflow-hidden min-w-[650px]">
           {children}
         </div>
       </div>

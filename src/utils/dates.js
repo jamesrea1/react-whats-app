@@ -2,8 +2,8 @@ import format from 'date-fns/format';
 import isToday from 'date-fns/isToday';
 import isYesterday from 'date-fns/isYesterday';
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays';
+import isSameDay from 'date-fns/isSameDay';
 // import { daysToWeeks } from 'date-fns';
-// import isSameDay from 'date-fns/isSameDay';
 
 function formatChatListDate(date, todayFormat = 'HH:mm') {
   if (isToday(date)) {
@@ -23,7 +23,7 @@ function formatMsgTime(date) {
   return format(date, 'H:mm');
 }
 
-export { formatChatListDate, formatMsgTime };
+export { formatChatListDate, formatMsgTime, isSameDay };
 
 /*
 dateMarkerFormat()

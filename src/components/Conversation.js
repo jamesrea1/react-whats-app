@@ -1,84 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
+import TextareaAutosize from 'react-textarea-autosize';
+import { formatChatListDate, formatMsgTime, isSameDay } from 'utils/dates';
 import { db, firebase } from 'lib/firebase';
 import { useAuth } from 'context/AuthContext';
 import { useActiveChat } from 'context/ActiveChatContext';
-import useInput from 'utils/useInput';
-import { formatChatListDate, formatMsgTime } from 'utils/dates';
-import TextareaAutosize from 'react-textarea-autosize';
-import isSameDay from 'date-fns/isSameDay'
-
-function useMsgs() {
-  const { authUser } = useAuth();
-  const { contact } = useActiveChat();
-  const [msgs, setMsgs] = useState([]);
-
-  const getDerivedChatKey = (user1, user2) => {
-    return user1 < user2 ? `${user1}_${user2}` : `${user2}_${user1}`;
-  };
-
-  const loadMsgs = (msgs) => {
-    const transformMsgs = (m) => ({
-      ...m,
-      sentByMe: m.author === authUser.uid,
-      sentAt: m.sentAt.toDate(),
-    });
-    const chatMsgs = msgs.map(transformMsgs);
-    setMsgs(chatMsgs);
-  };
-
-  /* observe msgs */
-  useEffect(() => {
-    if (authUser && contact) {
-      const chatId = getDerivedChatKey(authUser.uid, contact.uid);
-      return db
-        .collection(`chats/${chatId}/msgs`)
-        .orderBy('sentAt', 'asc')
-        .onSnapshot((snap) => {
-          const options = { serverTimestamps: 'estimate' };
-          const msgs = snap.docs.map((doc) => ({
-            ...doc.data(options),
-            id: doc.id,
-          }));
-          loadMsgs(msgs);
-        });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authUser, contact]);
-
-  useEffect(() => {
-    // TODO - cloud function triggers
-
-    if (msgs.length > 0) {
-      const chatId = getDerivedChatKey(authUser.uid, contact.uid);
-
-      db.doc(`chats/${chatId}`)
-        .set({
-          members: [authUser.uid, contact.uid],
-          memberInfo: {
-            [authUser.uid]: {
-              uid: authUser.uid,
-              displayName: authUser.displayName,
-              photoURL: authUser.photoURL,
-            },
-            [contact.uid]: {
-              uid: contact.uid,
-              displayName: contact.displayName,
-              photoURL: contact.photoURL,
-            },
-          },
-          lastMsg: msgs[msgs.length - 1],
-        })
-        .then(() => {})
-        .catch((error) => console.log(error.message));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [msgs]);
-
-  return msgs;
-}
+import useInput from 'hooks/useInput';
+import { useMsgs } from 'hooks/useMsgs';
 
 function ConversationHeader() {
   const { contact } = useActiveChat();
+
   return (
     <div className="px-4 py-2.5 flex-none flex items-center bg-[#ededed] border-b border-[#d8d8d8]">
       <div className="flex-none pr-4">
@@ -128,35 +59,10 @@ function Conversation() {
   );
 }
 
-function getMsgPosition(msg, idx, arr) {
-  const prev = arr[idx - 1];
-  const next = arr[idx + 1];
-
-  const userPrev = prev && prev.author === msg.author && isSameDay(prev.sentAt, msg.sentAt);
-  const userNext = next && next.author === msg.author && isSameDay(next.sentAt, msg.sentAt);
-
-  const isSingle = !userPrev && !userNext;
-  if (isSingle) {
-    return "SINGLE";
-  }
-
-  const isFront = !userPrev;
-  if (isFront) {
-    return 'FRONT';
-  }
-
-  const isEnd = !userNext;
-  if (isEnd) {
-    return 'END';
-  }
-
-  return 'MID';
-}
-
-function DateMarker({date}) {
+function DateMarker({ date }) {
   return (
     <div className="flex justify-center">
-      <div className="mb-3 pt-2 pb-2.5 px-3.5 text-xs text-gray-800 leading-4 rounded-md bg-[#e1f3fb] shadow">
+      <div className="mb-3 pt-2 pb-2.5 px-3.5 text-xs text-gray-800 leading-none rounded-md bg-[#e1f3fb] shadow">
         {formatChatListDate(date, "'TODAY'").toUpperCase()}
       </div>
     </div>
@@ -177,6 +83,33 @@ function shouldShowDateMarker(msg, previous) {
   return false;
 }
 
+function getMsgPosition(msg, idx, arr) {
+  const prev = arr[idx - 1];
+  const next = arr[idx + 1];
+
+  const userPrev =
+    prev && prev.author === msg.author && isSameDay(prev.sentAt, msg.sentAt);
+  const userNext =
+    next && next.author === msg.author && isSameDay(next.sentAt, msg.sentAt);
+
+  const isSingle = !userPrev && !userNext;
+  if (isSingle) {
+    return 'SINGLE';
+  }
+
+  const isFront = !userPrev;
+  if (isFront) {
+    return 'FRONT';
+  }
+
+  const isEnd = !userNext;
+  if (isEnd) {
+    return 'END';
+  }
+
+  return 'MID';
+}
+
 function Message({ msg, position }) {
   const hasMargin = ['SINGLE', 'END'].includes(position);
   const hasTail = ['SINGLE', 'FRONT'].includes(position);
@@ -195,10 +128,10 @@ function Message({ msg, position }) {
           className={`rounded-md shadow
             ${
               hasTail && msg.sentByMe
-              ? 'rounded-tr-none'
-              : hasTail
-              ? 'rounded-tl-none'
-              : ''
+                ? 'rounded-tr-none'
+                : hasTail
+                ? 'rounded-tl-none'
+                : ''
             }
             ${msg.sentByMe ? 'bg-[#dcf8c6]' : 'bg-white'}
           `}

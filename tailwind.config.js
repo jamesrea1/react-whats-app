@@ -32,6 +32,13 @@ module.exports = {
           // pink: colors.pink,
         },
       },
+      transitionTimingFunction: {
+        'in-expo': 'cubic-bezier(0.7, 0, 0.84, 0)',
+        'out-expo': 'cubic-bezier(0.16, 1, 0.3, 1)',
+        'in-quint': 'cubic-bezier(0.87, 0, 0.13, 1)',
+        'out-quint': 'cubic-bezier(0.22, 1, 0.36, 1)',
+        'in-out-quint': 'cubic-bezier(0.83, 0, 0.17, 1)',
+      },
     },
   },
   variants: {

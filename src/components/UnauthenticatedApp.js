@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { auth } from 'lib/firebase';
 import { ERROR_CODES } from 'utils/constants';
-import useInput from 'utils/useInput';
+import useInput from 'hooks/useInput';
 import { XCircleIcon } from '@heroicons/react/solid';
 
 function UnauthenticatedApp() {

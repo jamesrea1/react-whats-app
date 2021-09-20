@@ -1,99 +1,17 @@
+import { formatChatListDate } from 'utils/dates';
 import { useAuth } from 'context/AuthContext';
 import { useActiveChat } from 'context/ActiveChatContext';
-import useChatList from './useChatList';
-import { formatChatListDate } from 'utils/dates';
-import ChatListHeaderDropdown from './ChatListHeaderDropdown';
-
-function ChatList() {
-  const chats = useChatList();
-
-  return (
-    <div className="flex-auto overflow-y-auto bg-white border-t border-[#ebebeb]">
-      {chats && chats.map((c) => <Chat chat={c} key={c.id} />)}
-    </div>
-  );
-}
-
-function Chat({ chat }) {
-  const { contact, lastMsg } = chat;
-  const {
-    contact: activeContact,
-    setContact: setActiveContact,
-  } = useActiveChat();
-
-  const handleOpenChat = (e) => {
-    setActiveContact(contact);
-  };
-
-  return (
-    <button
-      onClick={handleOpenChat}
-      className={`chat-list-item h-[72px] w-full block text-left transition-colors
-        ${
-          activeContact && contact.uid === activeContact.uid
-            ? 'bg-[#ebebeb] hover:bg-[#ebebeb]'
-            : 'bg-white hover:bg-[#f5f5f5]'
-        }
-      `}
-    >
-      <div className="w-full h-full flex items-stretch">
-        <div className="pl-3.5 pr-4 flex items-center flex-none">
-          <div className="w-12 h-12 flex items-center justify-center">
-            <img
-              className="w-full h-full rounded-full object-cover"
-              src={contact.photoURL || 'default-avatar.svg'}
-              alt={contact.displayName}
-            />
-          </div>
-        </div>
-
-        <div
-          className={`chat-list-item__details pr-4 flex flex-col justify-center flex-auto min-w-0 border-t
-          ${
-            activeContact && contact.uid === activeContact.uid
-              ? 'border-[#ebebeb]'
-              : 'border-[#f5f5f5]'
-          }
-        `}
-        >
-          <div className="flex justify-between items-center">
-            <span className="inline-block text-lg text-black leading-6 overflow-hidden overflow-ellipsis whitespace-nowrap">
-              {contact.displayName}
-            </span>
-            <span className="inline-block ml-4 pt-1 text-xs text-black/40 leading-none">
-              {formatChatListDate(lastMsg.sentAt)}
-            </span>
-          </div>
-          <div className="mt-0.5 flex justify-between items-center">
-            <span className="inline-block text-sm text-black/60 leading-5 overflow-hidden overflow-ellipsis whitespace-nowrap">
-              {lastMsg.sentByMe && <MsgStatus msg={lastMsg} />}
-              <span>
-                {lastMsg.text}
-              </span>
-            </span>
-            <span className="inline-block ml-4"></span>
-          </div>
-        </div>
-      </div>
-    </button>
-  );
-}
-
-function MsgStatus() {
-  return (
-    <div className="w-18 h-18 inline-block align-top mr-0.5 text-[#4fc3f7]">
-      <svg viewBox="0 0 18 18" width="18" height="18">
-        <path
-          fill="currentColor"
-          d="M17.394 5.035l-.57-.444a.434.434 0 0 0-.609.076l-6.39 8.198a.38.38 0 0 1-.577.039l-.427-.388a.381.381 0 0 0-.578.038l-.451.576a.497.497 0 0 0 .043.645l1.575 1.51a.38.38 0 0 0 .577-.039l7.483-9.602a.436.436 0 0 0-.076-.609zm-4.892 0l-.57-.444a.434.434 0 0 0-.609.076l-6.39 8.198a.38.38 0 0 1-.577.039l-2.614-2.556a.435.435 0 0 0-.614.007l-.505.516a.435.435 0 0 0 .007.614l3.887 3.8a.38.38 0 0 0 .577-.039l7.483-9.602a.435.435 0 0 0-.075-.609z"
-        ></path>
-      </svg>
-    </div>
-  );
-}
+import useChatList from 'hooks/useChatList';
+import ChatListHeaderDropdown from 'components/ChatListHeaderDropdown';
+import { useDrawer } from 'context/DrawerManager';
 
 function ChatListHeader() {
   const { authUser } = useAuth();
+    const [open, setOpen] = useDrawer();
+
+  const handleNewChatClick = () =>{
+    setOpen(true);
+  }
 
   return (
     <div className="px-4 py-2.5 flex items-center justify-between bg-[#ededed]">
@@ -120,6 +38,7 @@ function ChatListHeader() {
         </button>
         <button
           type="button"
+          onClick={handleNewChatClick}
           className="w-10 h-10 ml-2 inline-flex items-center justify-center rounded-full active:bg-black/10 transition-colors ease-out duration-300 active:duration-100"
         >
           <svg viewBox="0 0 24 24" width="24" height="24">
@@ -152,6 +71,100 @@ function ChatListSearch() {
       <div className="absolute top-3 right-6 w-6 h-6 hidden">
         <IconLoading />
       </div>
+    </div>
+  );
+}
+
+function ChatList() {
+  const chats = useChatList();
+
+  return (
+    <div className="flex-auto overflow-y-auto bg-white border-t border-[#ebebeb]">
+      {chats && chats.map((c) => <Chat chat={c} key={c.id} />)}
+    </div>
+  );
+}
+
+function Chat({ chat }) {
+  const { contact, lastMsg } = chat;
+
+  const {
+    contact: activeContact,
+    setContact: setActiveContact,
+  } = useActiveChat();
+
+  const handleOpenChat = (e) => {
+    setActiveContact(contact);
+  };
+
+  return (
+    <button
+      onClick={handleOpenChat}
+      className={`chat-list-item h-[72px] w-full block text-left transition-colors
+        ${
+          activeContact && contact.uid === activeContact.uid
+            ? 'bg-[#ebebeb] hover:bg-[#ebebeb]'
+            : 'bg-white hover:bg-[#f5f5f5]'
+        }
+      `}
+    >
+      <div className="w-full h-full flex items-stretch">
+        {/* avatar */}
+        <div className="pl-3.5 pr-4 flex items-center flex-none">
+          <div className="w-12 h-12 flex items-center justify-center">
+            <img
+              className="w-full h-full rounded-full object-cover"
+              src={contact.photoURL || 'default-avatar.svg'}
+              alt={contact.displayName}
+            />
+          </div>
+        </div>
+        {/* chat details */}
+        <div
+          className={`chat-list-item__details pr-4 flex flex-col justify-center flex-auto min-w-0 border-t
+          ${
+            activeContact && contact.uid === activeContact.uid
+              ? 'border-[#ebebeb]'
+              : 'border-[#f5f5f5]'
+          }
+        `}
+        >
+          {/* contact */}
+          <div className="flex justify-between items-center">
+            <span className="inline-block text-lg text-black leading-6 overflow-hidden overflow-ellipsis whitespace-nowrap">
+              {contact.displayName}
+            </span>
+            <span className="inline-block ml-4 pt-1 text-xs text-black/40 leading-none">
+              {formatChatListDate(lastMsg.sentAt)}
+            </span>
+          </div>
+          {/* last msg */}
+          <div className="mt-0.5 flex justify-between items-center">
+            <div className="flex items-center flex-1 min-w-0">
+              {lastMsg.sentByMe && <MsgStatus msg={lastMsg} />}
+              <span className="block text-sm text-black/60 leading-5  [ overflow-hidden overflow-ellipsis whitespace-nowrap ]">
+                {lastMsg.text}
+              </span>
+            </div>
+
+            {/* <span className="inline-block ml-4">UNREAD STATUS</span> */}
+
+          </div>
+        </div>
+      </div>
+    </button>
+  );
+}
+
+function MsgStatus() {
+  return (
+    <div className="w-18 h-18 inline-block mr-0.5 text-[#4fc3f7]">
+      <svg viewBox="0 0 18 18" width="18" height="18">
+        <path
+          fill="currentColor"
+          d="M17.394 5.035l-.57-.444a.434.434 0 0 0-.609.076l-6.39 8.198a.38.38 0 0 1-.577.039l-.427-.388a.381.381 0 0 0-.578.038l-.451.576a.497.497 0 0 0 .043.645l1.575 1.51a.38.38 0 0 0 .577-.039l7.483-9.602a.436.436 0 0 0-.076-.609zm-4.892 0l-.57-.444a.434.434 0 0 0-.609.076l-6.39 8.198a.38.38 0 0 1-.577.039l-2.614-2.556a.435.435 0 0 0-.614.007l-.505.516a.435.435 0 0 0 .007.614l3.887 3.8a.38.38 0 0 0 .577-.039l7.483-9.602a.435.435 0 0 0-.075-.609z"
+        ></path>
+      </svg>
     </div>
   );
 }
