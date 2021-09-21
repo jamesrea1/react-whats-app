@@ -39,7 +39,7 @@ function Conversation() {
         style={{ zIndex: '-1' }}
       ></div>
       <ChatScroller
-        className={`msgs-container pt-3 pb-2 absolute inset-0 flex flex-col overflow-x-hidden overflow-y-auto select-text`}
+        className={`msgs-container pt-3 pb-2 absolute inset-0 flex flex-col justify-end overflow-x-hidden overflow-y-auto select-text`}
       >
         {msgs &&
           msgs.map((msg, idx, arr) => {

@@ -2,12 +2,13 @@ import { formatChatListDate } from 'utils/dates';
 import { useAuth } from 'context/AuthContext';
 import { useActiveChat } from 'context/ActiveChatContext';
 import useChatList from 'hooks/useChatList';
-import ChatListHeaderDropdown from 'components/ChatListHeaderDropdown';
 import { useDrawer } from 'context/DrawerManager';
+import ChatListHeaderDropdown from 'components/ChatListHeaderDropdown';
+import SearchBox from './SearchBox';
 
 function ChatListHeader() {
   const { authUser } = useAuth();
-    const [open, setOpen] = useDrawer();
+  const { setOpen } = useDrawer();
 
   const handleNewChatClick = () =>{
     setOpen(true);
@@ -55,24 +56,7 @@ function ChatListHeader() {
 }
 
 function ChatListSearch() {
-  return (
-    <div className="relative flex-none h-[50px] bg-[#f6f6f6]">
-      <div className="absolute top-[7px] left-3 right-[14px] h-[35px] rounded-full bg-white">
-        <div className="w-full h-full flex items-center pl-[66px] pr-8">
-          <input
-            className="h-5 w-full outline-none text-sm leading-none"
-            placeholder="Search or start new chat "
-          />
-        </div>
-      </div>
-      <div className="absolute top-3 left-6 w-6 h-6">
-        <IconSearch />
-      </div>
-      <div className="absolute top-3 right-6 w-6 h-6 hidden">
-        <IconLoading />
-      </div>
-    </div>
-  );
+  return <SearchBox />;
 }
 
 function ChatList() {
@@ -100,7 +84,7 @@ function Chat({ chat }) {
   return (
     <button
       onClick={handleOpenChat}
-      className={`chat-list-item h-[72px] w-full block text-left transition-colors
+      className={`chat-list-item h-[72px] w-full block flex-none text-left transition-colors
         ${
           activeContact && contact.uid === activeContact.uid
             ? 'bg-[#ebebeb] hover:bg-[#ebebeb]'
@@ -146,9 +130,7 @@ function Chat({ chat }) {
                 {lastMsg.text}
               </span>
             </div>
-
             {/* <span className="inline-block ml-4">UNREAD STATUS</span> */}
-
           </div>
         </div>
       </div>
@@ -201,29 +183,6 @@ function IconBackArrow() {
           fill="currentColor"
           d="M12 4l1.4 1.4L7.8 11H20v2H7.8l5.6 5.6L12 20l-8-8 8-8z"
         ></path>
-      </svg>
-    </div>
-  );
-}
-
-function IconLoading() {
-  return (
-    <div className="loading w-5 h-5 text-black">
-      <svg
-        className="animate-spin"
-        width="20"
-        height="20"
-        viewBox="0 0 45 45"
-        role="status"
-      >
-        <circle
-          className="loading__circle"
-          cx="22.5"
-          cy="22.5"
-          r="20"
-          fill="none"
-          strokeWidth="5"
-        ></circle>
       </svg>
     </div>
   );

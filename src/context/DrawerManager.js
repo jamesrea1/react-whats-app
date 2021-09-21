@@ -6,7 +6,7 @@ export function DrawerManager({ children }) {
    const [open, setOpen] = useState(false);
 
   return (
-    <DrawerManagerContext.Provider value={[ open, setOpen ]}>
+    <DrawerManagerContext.Provider value={{ open, setOpen }}>
       {children}
     </DrawerManagerContext.Provider>
   );

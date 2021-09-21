@@ -6,7 +6,7 @@ function useChatList() {
   const [chats, setChats] = useState([]);
   const { authUser } = useAuth();
 
-  const loadChats = (chats) => {
+  const transformChats = (chats) => {
     const findContact = (memberInfo) =>
       Object.values(memberInfo).find((member) => member.uid !== authUser.uid);
 
@@ -29,7 +29,7 @@ function useChatList() {
     };
 
     const chatList = chats.map(transformChat).sort(sortByDate);
-    setChats(chatList);
+    return chatList;
   };
 
   /* observe chats */
@@ -43,7 +43,7 @@ function useChatList() {
             ...doc.data(),
             id: doc.id,
           }));
-          loadChats(chats);
+          setChats(transformChats(chats));
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
