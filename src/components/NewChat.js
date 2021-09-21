@@ -83,7 +83,7 @@ function ContactList() {
 
   return (
     <div className="overflow-y-auto">
-      {contactsGrouped.map(cg => ([<ContactListSeperator seperator={cg.alphabet} />, ...cg.record.map(c => <Contact contact={c} />)]))}
+      {contactsGrouped.map(cg => ([<ContactListSeperator seperator={cg.alphabet} key={cg.alphabet} />, ...cg.record.map(c => <Contact contact={c} key={c.uid} />)]))}
     </div>
   );
 }
