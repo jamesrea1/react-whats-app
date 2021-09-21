@@ -1,6 +1,6 @@
-# React WhatsApp
+# React WhatsApp Web
 
-A project to experiment with..
+A React chat application experimenting with..
 - Firebase Firestore data synchronisation
 - Firebase RTDB user presence
 - NoSQL data modelling
@@ -18,10 +18,6 @@ A project to experiment with..
 - https://react-whats-app.web.app/
 
 - Credentials are pre-populated in the sign in form - email: "testuser@example.com", password: "testuser"
-
-## Screenshots
-
-- (link)
 
 ## Todo
 
